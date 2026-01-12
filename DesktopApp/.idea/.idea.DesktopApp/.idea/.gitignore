@@ -3,8 +3,8 @@
 /workspace.xml
 # Rider ignored files
 /contentModel.xml
+/.idea.DesktopApp.iml
 /modules.xml
-/.idea.DSPC012601-Projektmanagement.iml
 /projectSettingsUpdater.xml
 # Ignored default folder with query files
 /queries/
