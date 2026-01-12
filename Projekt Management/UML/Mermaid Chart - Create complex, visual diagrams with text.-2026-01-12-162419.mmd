@@ -1,0 +1,39 @@
+classDiagram
+    class DataClass {
+	    - int uid
+	    - bool isActive
+	    - string createDate
+    }
+
+    <<abstract>> DataClass
+
+    class Projekt {
+	    - [Ressourcen] resourcen
+	    - [Vorgang] vorgaenge
+    }
+
+    class Vorgang {
+	    - int dauer
+	    - date startDate
+	    - date endDate
+	    - int workerUID
+    }
+
+    class VorgangRevision {
+	    - int vorgangUID
+    }
+
+    class Ressourcen {
+	    - string name
+	    - int anz
+    }
+
+    class Worker {
+	    - string name
+    }
+
+    DataClass <|-- Projekt
+    DataClass <|-- Vorgang
+    DataClass <|-- Ressourcen
+    DataClass <|-- Worker
+    DataClass <|-- VorgangRevision
