@@ -2,4 +2,4 @@
 
 ## Tech Stack
 - Database: SQLite file
-- Frontend: WPF 
+- Frontend: WPF (Framework: Material Design In XAML Toolkit)
