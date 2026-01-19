@@ -1,0 +1,21 @@
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\bin\Debug\net10.0-windows\Projektmanagement DesktopApp.exe
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\bin\Debug\net10.0-windows\Projektmanagement DesktopApp.deps.json
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\bin\Debug\net10.0-windows\Projektmanagement DesktopApp.runtimeconfig.json
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\bin\Debug\net10.0-windows\Projektmanagement DesktopApp.dll
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\bin\Debug\net10.0-windows\Projektmanagement DesktopApp.pdb
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\MainWindow.g.cs
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\App.g.cs
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp_MarkupCompile.cache
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp_MarkupCompile.lref
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\MainWindow.baml
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.g.resources
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.AssemblyInfoInputs.cache
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.AssemblyInfo.cs
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.csproj.CoreCompileInputs.cache
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.sourcelink.json
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.dll
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\refint\Projektmanagement DesktopApp.dll
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.pdb
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\Projektmanagement DesktopApp.genruntimeconfig.cache
+C:\Users\olive\RiderProjects\DSPC012601-Projektmanagement\DesktopApp\obj\Debug\net10.0-windows\ref\Projektmanagement DesktopApp.dll
