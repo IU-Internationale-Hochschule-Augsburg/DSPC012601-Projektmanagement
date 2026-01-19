@@ -4,8 +4,8 @@
 
 public class ProjektRepository : RepositoryBase<Projekt>
 {
-    public ProjektRepository(string filePath) : base(filePath) { }
-
+    public ProjektRepository(string filePath="./data/projekte.json") : base(filePath) { }
+    
     public override IReadOnlyList<Projekt> GetAll()
     {
         return ReadAllFromFile();

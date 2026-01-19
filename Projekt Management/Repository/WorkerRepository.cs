@@ -3,7 +3,7 @@
 
 public class WorkerRepository : RepositoryBase<Worker>
 {
-    public WorkerRepository(string filePath) : base(filePath) { }
+    public WorkerRepository(string filePath="./data/worker.json") : base(filePath) { }
 
     public override IReadOnlyList<Worker> GetAll()
     {

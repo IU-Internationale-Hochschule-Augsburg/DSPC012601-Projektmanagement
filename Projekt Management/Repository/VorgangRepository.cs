@@ -3,7 +3,7 @@
 
 public class VorgangRepository : RepositoryBase<Vorgang>
 {
-    public VorgangRepository(string filePath) : base(filePath) { }
+    public VorgangRepository(string filePath="./data/vorgang.json") : base(filePath) { }
 
     public override IReadOnlyList<Vorgang> GetAll()
     {

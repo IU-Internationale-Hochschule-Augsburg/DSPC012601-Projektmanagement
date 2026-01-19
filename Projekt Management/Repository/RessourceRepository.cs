@@ -2,7 +2,7 @@
 
 ublic class RessourceRepository : RepositoryBase<Ressource>
 {
-    public RessourceRepository(string filePath) : base(filePath) { }
+    public RessourceRepository(string filePath="./data/ressource.json") : base(filePath) { }
 
     public override IReadOnlyList<Ressource> GetAll()
     {

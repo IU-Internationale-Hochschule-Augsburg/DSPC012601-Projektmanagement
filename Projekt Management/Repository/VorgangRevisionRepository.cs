@@ -2,7 +2,7 @@
 
 public class VorgangRevisionRepository : RepositoryBase<VorgangRevision>
 {
-    public VorgangRevisionRepository(string filePath) : base(filePath) { }
+    public VorgangRevisionRepository(string filePath="./data/vorgangRevision.json") : base(filePath) { }
 
     public override IReadOnlyList<VorgangRevision> GetAll()
     {
