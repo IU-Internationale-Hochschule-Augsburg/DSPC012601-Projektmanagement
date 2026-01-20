@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\IU-Unterlagen\\IU_Unterlagen\\5_Semester\\C-Sharp\\DesktopApp\\Projektmanagement DesktopApp.csproj": {}
+    "C:\\Users\\olive\\RiderProjects\\DSPC012601-Projektmanagement\\DesktopApp\\Projektmanagement DesktopApp.csproj": {}
   },
   "projects": {
-    "D:\\IU-Unterlagen\\IU_Unterlagen\\5_Semester\\C-Sharp\\DesktopApp\\Projektmanagement DesktopApp.csproj": {
+    "C:\\Users\\olive\\RiderProjects\\DSPC012601-Projektmanagement\\DesktopApp\\Projektmanagement DesktopApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\IU-Unterlagen\\IU_Unterlagen\\5_Semester\\C-Sharp\\DesktopApp\\Projektmanagement DesktopApp.csproj",
+        "projectUniqueName": "C:\\Users\\olive\\RiderProjects\\DSPC012601-Projektmanagement\\DesktopApp\\Projektmanagement DesktopApp.csproj",
         "projectName": "Projektmanagement DesktopApp",
-        "projectPath": "D:\\IU-Unterlagen\\IU_Unterlagen\\5_Semester\\C-Sharp\\DesktopApp\\Projektmanagement DesktopApp.csproj",
-        "packagesPath": "C:\\Users\\Admin_corgi\\.nuget\\packages\\",
-        "outputPath": "D:\\IU-Unterlagen\\IU_Unterlagen\\5_Semester\\C-Sharp\\DesktopApp\\obj\\",
+        "projectPath": "C:\\Users\\olive\\RiderProjects\\DSPC012601-Projektmanagement\\DesktopApp\\Projektmanagement DesktopApp.csproj",
+        "packagesPath": "C:\\Users\\olive\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\olive\\RiderProjects\\DSPC012601-Projektmanagement\\DesktopApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin_corgi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\olive\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0-windows"
@@ -82,7 +82,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Users\\olive\\.dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
