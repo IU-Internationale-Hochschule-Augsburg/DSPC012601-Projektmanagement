@@ -6,7 +6,7 @@ namespace Projektmanagement_DesktopApp;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App
 {
     public static DataSourceContext DbContext { get; private set; } = null!;
     
