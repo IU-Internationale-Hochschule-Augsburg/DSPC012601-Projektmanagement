@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.DataSource;
 
 namespace Projektmanagement_DesktopApp;
