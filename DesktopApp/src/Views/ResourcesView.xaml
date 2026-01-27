@@ -1,0 +1,116 @@
+<UserControl x:Class="Projektmanagement_DesktopApp.Views.ResourcesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Projektmanagement_DesktopApp.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*" MinWidth="300"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="2*" MinWidth="400"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="15" Background="White">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding HeaderText}" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#1976D2"/>
+                    <Button Grid.Column="1" Command="{Binding AddCommand}" Width="36" Height="36" Background="#1976D2" BorderThickness="0" Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="18">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                        <Path Data="M 0,6 L 12,6 M 6,0 L 6,12" Stroke="White" StrokeThickness="3" Stretch="Uniform" Width="16" Height="16"/>
+                    </Button>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" Visibility="{Binding IsListVisible, Converter={StaticResource BoolToVisibility}}">
+                    <ItemsControl ItemsSource="{Binding Resources}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="10,12" Background="Transparent" Cursor="Hand">
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                    </Border.InputBindings>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding Count, StringFormat='Anzahl: {0}'}" FontSize="12" Foreground="#757575"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="1" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="Name *" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,15"/>
+                    <TextBlock Text="Anzahl" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewCount, UpdateSourceTrigger=PropertyChanged}" Padding="8"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}">
+                    <Button Content="Abbrechen" Command="{Binding CancelCommand}" Width="100" Height="36" Margin="0,0,10,0"/>
+                    <Button Content="Speichern" Command="{Binding SaveCommand}" Width="100" Height="36" Background="#1976D2" Foreground="White"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="20" Background="White">
+            <Grid>
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedResource}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <TextBlock Text="Details" FontSize="24" FontWeight="SemiBold" Foreground="#1976D2" Margin="0,0,0,20"/>
+                    <TextBlock Text="{Binding SelectedResource.Name}" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding SelectedResource.Count, StringFormat='Anzahl: {0}'}" Margin="0,10,0,0"/>
+                </StackPanel>
+                <TextBlock Text="Keine Ressource ausgewählt" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#757575">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedResource}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
