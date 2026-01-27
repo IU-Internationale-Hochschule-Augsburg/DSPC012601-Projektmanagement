@@ -24,7 +24,8 @@ public class ProjectRepository : IProjectRepository
     {
         var entity = new Project
         {
-            Name = model.Name
+            Name = model.Name,
+            Description = model.Description
         };
 
         _context.Projects.Add(entity);
@@ -41,6 +42,7 @@ public class ProjectRepository : IProjectRepository
         {
             Id = entity.id,
             Name = entity.Name,
+            Description = entity.Description,
             CreatedAt = entity.createDate
         };
     }
