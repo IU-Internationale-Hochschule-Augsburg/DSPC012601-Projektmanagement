@@ -23,4 +23,13 @@
       <Folder Include="src\Services\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="README_IMPLEMENTIERUNG.md" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Content Include="obj\Debug\net10.0-windows\Projektmanagement DesktopApp_MarkupCompile.lref" />
+    </ItemGroup>
+
 </Project>
