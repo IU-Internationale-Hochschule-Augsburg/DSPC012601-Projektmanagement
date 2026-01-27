@@ -30,12 +30,6 @@
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Height" Value="50" />
             <Setter Property="Padding" Value="20,0" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" Value="{Binding CurrentViewName}">
-                    <Setter Property="Background" Value="#33FFFFFF" />
-                    <Setter Property="FontWeight" Value="Bold" />
-                </DataTrigger>
-            </Style.Triggers>
         </Style>
     </Window.Resources>
 

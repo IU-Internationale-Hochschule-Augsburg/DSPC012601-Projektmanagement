@@ -8,40 +8,41 @@ namespace Projektmanagement_DesktopApp.ViewModels;
 public class ProjectsViewModel : ViewModelBase
 {
     private readonly IProjectRepository _projectRepository;
-    private bool _isAddingNew;
+    private bool _isAddingNewProject;
     private ProjectModel? _selectedProject;
-    private string _newName = string.Empty;
+    private string _newProjectName = string.Empty;
+    private string _newProjectDescription = string.Empty;
 
     public ProjectsViewModel(IProjectRepository projectRepository)
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         Projects = new ObservableCollection<ProjectModel>();
         
-        AddCommand = new RelayCommand(_ => StartAdding());
-        SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
-        CancelCommand = new RelayCommand(_ => CancelAdding());
-        SelectCommand = new RelayCommand(p => SelectedProject = p as ProjectModel);
+        AddProjectCommand = new RelayCommand(_ => StartAdding());
+        SaveProjectCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
+        CancelAddProjectCommand = new RelayCommand(_ => CancelAdding());
+        SelectProjectCommand = new RelayCommand(p => SelectedProject = p as ProjectModel);
         
         _ = LoadAsync();
     }
 
     public ObservableCollection<ProjectModel> Projects { get; }
 
-    public bool IsAddingNew
+    public bool IsAddingNewProject
     {
-        get => _isAddingNew;
+        get => _isAddingNewProject;
         set
         {
-            if (SetProperty(ref _isAddingNew, value))
+            if (SetProperty(ref _isAddingNewProject, value))
             {
                 OnPropertyChanged(nameof(HeaderText));
-                OnPropertyChanged(nameof(IsListVisible));
+                OnPropertyChanged(nameof(IsProjectListVisible));
             }
         }
     }
 
-    public string HeaderText => IsAddingNew ? "Neues Projekt" : "Projekte";
-    public bool IsListVisible => !IsAddingNew;
+    public string HeaderText => IsAddingNewProject ? "Neues Projekt" : "Projekte";
+    public bool IsProjectListVisible => !IsAddingNewProject;
 
     public ProjectModel? SelectedProject
     {
@@ -49,22 +50,28 @@ public class ProjectsViewModel : ViewModelBase
         set => SetProperty(ref _selectedProject, value);
     }
 
-    public string NewName
+    public string NewProjectName
     {
-        get => _newName;
+        get => _newProjectName;
         set
         {
-            if (SetProperty(ref _newName, value))
+            if (SetProperty(ref _newProjectName, value))
             {
-                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+                SaveProjectCommand.RaiseCanExecuteChanged();
             }
         }
     }
 
-    public RelayCommand AddCommand { get; }
-    public RelayCommand SaveCommand { get; }
-    public RelayCommand CancelCommand { get; }
-    public RelayCommand SelectCommand { get; }
+    public string NewProjectDescription
+    {
+        get => _newProjectDescription;
+        set => SetProperty(ref _newProjectDescription, value);
+    }
+
+    public RelayCommand AddProjectCommand { get; }
+    public RelayCommand SaveProjectCommand { get; }
+    public RelayCommand CancelAddProjectCommand { get; }
+    public RelayCommand SelectProjectCommand { get; }
 
     private async System.Threading.Tasks.Task LoadAsync()
     {
@@ -82,20 +89,25 @@ public class ProjectsViewModel : ViewModelBase
 
     private void StartAdding()
     {
-        NewName = string.Empty;
-        IsAddingNew = true;
+        NewProjectName = string.Empty;
+        NewProjectDescription = string.Empty;
+        IsAddingNewProject = true;
     }
 
-    private bool CanSave() => !string.IsNullOrWhiteSpace(NewName);
+    private bool CanSave() => !string.IsNullOrWhiteSpace(NewProjectName);
 
     private async System.Threading.Tasks.Task SaveAsync()
     {
         try
         {
-            var model = new ProjectModel { Name = NewName.Trim() };
+            var model = new ProjectModel 
+            { 
+                Name = NewProjectName.Trim(),
+                Description = NewProjectDescription.Trim()
+            };
             var saved = await _projectRepository.AddAsync(model);
             Projects.Add(saved);
-            IsAddingNew = false;
+            IsAddingNewProject = false;
             SelectedProject = saved;
         }
         catch (Exception ex)
@@ -104,5 +116,5 @@ public class ProjectsViewModel : ViewModelBase
         }
     }
 
-    private void CancelAdding() => IsAddingNew = false;
+    private void CancelAdding() => IsAddingNewProject = false;
 }
