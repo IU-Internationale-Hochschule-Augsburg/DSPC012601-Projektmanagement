@@ -81,7 +81,7 @@ public class ResourcesViewModel : ViewModelBase
             Resources.Clear();
             foreach (var item in data) Resources.Add(item);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Laden: {ex.Message}");
         }
@@ -106,7 +106,7 @@ public class ResourcesViewModel : ViewModelBase
             IsAddingNew = false;
             SelectedResource = saved;
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Speichern: {ex.Message}");
         }

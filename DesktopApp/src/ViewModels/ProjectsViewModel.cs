@@ -81,7 +81,7 @@ public class ProjectsViewModel : ViewModelBase
             Projects.Clear();
             foreach (var item in data) Projects.Add(item);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Laden: {ex.Message}");
         }
@@ -110,7 +110,7 @@ public class ProjectsViewModel : ViewModelBase
             IsAddingNewProject = false;
             SelectedProject = saved;
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Speichern: {ex.Message}");
         }

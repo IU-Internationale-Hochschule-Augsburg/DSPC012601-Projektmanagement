@@ -74,7 +74,7 @@ public class TasksViewModel : ViewModelBase
             Tasks.Clear();
             foreach (var item in data) Tasks.Add(item);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Laden: {ex.Message}");
         }
@@ -98,7 +98,7 @@ public class TasksViewModel : ViewModelBase
             IsAddingNew = false;
             SelectedTask = saved;
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Speichern: {ex.Message}");
         }

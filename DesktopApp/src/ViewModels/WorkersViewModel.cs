@@ -74,7 +74,7 @@ public class WorkersViewModel : ViewModelBase
             Workers.Clear();
             foreach (var item in data) Workers.Add(item);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Laden: {ex.Message}");
         }
@@ -98,7 +98,7 @@ public class WorkersViewModel : ViewModelBase
             IsAddingNew = false;
             SelectedWorker = saved;
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Speichern: {ex.Message}");
         }
