@@ -4,22 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Projektmanagement_DesktopApp"
+        xmlns:vm="clr-namespace:Projektmanagement_DesktopApp.ViewModels"
+        xmlns:views="clr-namespace:Projektmanagement_DesktopApp.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        Style="{StaticResource MaterialDesignWindow}">
+        Title="Projektmanagement" Height="600" Width="1000"
+        Style="{StaticResource MaterialDesignWindow}"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ProjectsViewModel}">
+            <views:ProjectsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ResourcesViewModel}">
+            <views:ResourcesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TasksViewModel}">
+            <views:TasksView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:WorkersViewModel}">
+            <views:WorkersView />
+        </DataTemplate>
+
+        <Style x:Key="NavButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Padding" Value="20,0" />
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> 
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBox x:Name="NewTaskInput" 
-                 Grid.Column="0" 
-                 Height="30" 
-                 Width="500"
-                 VerticalContentAlignment="Center" 
-                 Margin="0,0,10,10" />
-        
-        <Button Grid.Row="1" Height="100" Width="200">Test</Button>
+        <!-- Navigation Menu -->
+        <Border Grid.Row="0" Background="{DynamicResource MaterialDesign.Brush.Primary}" materialDesign:ElevationAssist.Elevation="Dp4" Margin="0,0,0,5">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Projekte" 
+                        Style="{StaticResource NavButtonStyle}" 
+                        Tag="Projects"
+                        Command="{Binding NavigateCommand}" 
+                        CommandParameter="Projects" />
+                <Button Content="Ressourcen" 
+                        Style="{StaticResource NavButtonStyle}" 
+                        Tag="Resources"
+                        Command="{Binding NavigateCommand}" 
+                        CommandParameter="Resources" />
+                <Button Content="Aufgaben" 
+                        Style="{StaticResource NavButtonStyle}" 
+                        Tag="Tasks"
+                        Command="{Binding NavigateCommand}" 
+                        CommandParameter="Tasks" />
+                <Button Content="Bearbeiter" 
+                        Style="{StaticResource NavButtonStyle}" 
+                        Tag="Workers"
+                        Command="{Binding NavigateCommand}" 
+                        CommandParameter="Workers" />
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content Area -->
+        <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}" />
     </Grid>
 </Window>
