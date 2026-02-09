@@ -18,12 +18,9 @@ public partial class ProjectsView : UserControl
             this.Resources["DeleteDialog"],
             "RootDialog");
 
-        if (result is bool boolResult && boolResult)
+        if (result is true && DataContext is ProjectsViewModel viewModel)
         {
-            if (DataContext is ProjectsViewModel viewModel)
-            {
-                await viewModel.DeleteSelectedProjectAsync();
-            }
+            await viewModel.DeleteSelectedProjectAsync();
         }
     }
 }
