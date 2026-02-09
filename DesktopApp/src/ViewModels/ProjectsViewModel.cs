@@ -117,4 +117,13 @@ public class ProjectsViewModel : ViewModelBase
     }
 
     private void CancelAdding() => IsAddingNewProject = false;
+    
+    public void DeleteSelectedProject()
+    {
+        if (SelectedProject != null)
+        {
+            Projects.Remove(SelectedProject);
+            SelectedProject = null;
+        }
+    }
 }
