@@ -17,12 +17,12 @@ public class ProjectsViewModel : ViewModelBase
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         Projects = new ObservableCollection<ProjectModel>();
-        
+
         AddProjectCommand = new RelayCommand(_ => StartAdding());
         SaveProjectCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelAddProjectCommand = new RelayCommand(_ => CancelAdding());
         SelectProjectCommand = new RelayCommand(p => SelectedProject = p as ProjectModel);
-        
+
         _ = LoadAsync();
     }
 
@@ -100,8 +100,8 @@ public class ProjectsViewModel : ViewModelBase
     {
         try
         {
-            var model = new ProjectModel 
-            { 
+            var model = new ProjectModel
+            {
                 Name = NewProjectName.Trim(),
                 Description = NewProjectDescription.Trim()
             };
@@ -117,13 +117,21 @@ public class ProjectsViewModel : ViewModelBase
     }
 
     private void CancelAdding() => IsAddingNewProject = false;
-    
-    public void DeleteSelectedProject()
+
+    public async System.Threading.Tasks.Task DeleteSelectedProjectAsync()
     {
         if (SelectedProject != null)
         {
-            Projects.Remove(SelectedProject);
-            SelectedProject = null;
+            try
+            {
+                await _projectRepository.DeleteAsync(SelectedProject.Id);
+                Projects.Remove(SelectedProject);
+                SelectedProject = null;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Fehler beim Löschen: {ex.Message}");
+            }
         }
     }
 }

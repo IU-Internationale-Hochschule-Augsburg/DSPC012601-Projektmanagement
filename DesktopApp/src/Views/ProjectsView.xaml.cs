@@ -11,17 +11,18 @@ public partial class ProjectsView : UserControl
     {
         InitializeComponent();
     }
+
     private async void DeleteButton_Click(object sender, RoutedEventArgs e)
     {
         var result = await DialogHost.Show(
-            this.Resources["DeleteDialog"], 
+            this.Resources["DeleteDialog"],
             "RootDialog");
 
         if (result is bool boolResult && boolResult)
         {
             if (DataContext is ProjectsViewModel viewModel)
             {
-                viewModel.DeleteSelectedProject();
+                await viewModel.DeleteSelectedProjectAsync();
             }
         }
     }
