@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Projektmanagement_DesktopApp.Views"
              xmlns:viewModels="clr-namespace:Projektmanagement_DesktopApp.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -233,11 +234,30 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <TextBlock Text="Projektdetails"
-                               FontSize="24"
-                               FontWeight="SemiBold"
-                               Foreground="#1976D2"
-                               Margin="0,0,0,20" />
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Projektdetails" Grid.Column="0"
+                                   FontSize="24"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1976D2" />
+                        <Button Grid.Column="1" Margin="0" Width="40" Height="40"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                ToolTip="Bearbeiten">
+                            <materialDesign:PackIcon Kind="Pencil" />
+                        </Button>
+                        <Button Grid.Column="2" Margin="0" Width="40" Height="40"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                ToolTip="Löschen">
+                            <materialDesign:PackIcon Kind="Delete" />
+                        </Button>
+                    </Grid>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -261,7 +281,6 @@
                                    Foreground="#212121"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,15" />
-
                         <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="Beschreibung:"
                                    FontSize="14"
