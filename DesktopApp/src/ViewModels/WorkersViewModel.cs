@@ -22,6 +22,8 @@ public class WorkersViewModel : ViewModelBase
         CancelCommand = new RelayCommand(_ => CancelAdding());
         SelectCommand = new RelayCommand(w => SelectedWorker = w as WorkerModel);
         
+        EditCommand = new RelayCommand(_ => StartEditing());
+        
         _ = LoadAsync();
     }
 
@@ -40,7 +42,7 @@ public class WorkersViewModel : ViewModelBase
         }
     }
 
-    public string HeaderText => IsAddingNew ? "Neuer Bearbeiter" : "Bearbeiter";
+    public string HeaderText => SelectedWorker != null && IsAddingNew ? "Bearbeiter bearbeiten" : (IsAddingNew ? "Neuer Bearbeiter" : "Bearbeiter");
     public bool IsListVisible => !IsAddingNew;
 
     public WorkerModel? SelectedWorker
@@ -65,6 +67,7 @@ public class WorkersViewModel : ViewModelBase
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }
     public RelayCommand SelectCommand { get; }
+    public RelayCommand EditCommand { get; }
 
     private async System.Threading.Tasks.Task LoadAsync()
     {
@@ -82,27 +85,65 @@ public class WorkersViewModel : ViewModelBase
 
     private void StartAdding()
     {
+        SelectedWorker = null;
         NewName = string.Empty;
         IsAddingNew = true;
     }
 
+    private void StartEditing()
+    {
+        if (SelectedWorker == null) return;
+        NewName = SelectedWorker.Name; 
+        IsAddingNew = true;
+        OnPropertyChanged(nameof(HeaderText));
+    }
+    
     private bool CanSave() => !string.IsNullOrWhiteSpace(NewName);
 
     private async System.Threading.Tasks.Task SaveAsync()
     {
         try
         {
-            var model = new WorkerModel { Name = NewName.Trim() };
-            var saved = await _workerRepository.AddAsync(model);
-            Workers.Add(saved);
+            if (SelectedWorker != null)
+            {
+                SelectedWorker.Name = NewName.Trim();
+                await _workerRepository.UpdateAsync(SelectedWorker);
+            }
+            else
+            {
+                var model = new WorkerModel { Name = NewName.Trim() };
+                var saved = await _workerRepository.AddAsync(model);
+                Workers.Add(saved);
+            }
             IsAddingNew = false;
-            SelectedWorker = saved;
         }
+        
         catch (InvalidOperationException ex)
         {
             MessageBox.Show($"Fehler beim Speichern: {ex.Message}");
         }
     }
 
-    private void CancelAdding() => IsAddingNew = false;
+    private void CancelAdding()
+    {
+        IsAddingNew = false;
+        NewName = string.Empty; 
+    }
+    
+    public async System.Threading.Tasks.Task DeleteSelectedWorkerAsync()
+    {
+        if (SelectedWorker != null)
+        {
+            try
+            {
+                await _workerRepository.DeleteAsync(SelectedWorker.Id);
+                Workers.Remove(SelectedWorker);
+                SelectedWorker = null;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Fehler beim Löschen: {ex.Message}");
+            }
+        }
+    }
 }
