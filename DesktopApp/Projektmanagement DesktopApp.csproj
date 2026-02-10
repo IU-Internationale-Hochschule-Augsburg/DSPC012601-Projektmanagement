@@ -34,7 +34,7 @@
 
 
     <ItemGroup>
-      <Page Update="src\Views\Ressources\ResourcesDialogs.xaml">
+      <Page Update="src\Views\Ressources\WorkersDialogs.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>

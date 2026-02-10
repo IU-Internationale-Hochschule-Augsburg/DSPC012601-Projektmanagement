@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.DataSource;
 using Projektmanagement_DesktopApp.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Projektmanagement_DesktopApp.Repositories;
 
@@ -43,5 +44,27 @@ public class WorkerRepository : IWorkerRepository
             Name = entity.name,
             CreatedAt = entity.createDate
         };
+    }
+    
+    public async Task UpdateAsync(WorkerModel model)
+    {
+        var entity = await _context.Workers.FindAsync(model.Id);
+        if (entity != null)
+        {
+            entity.name = model.Name;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var deleted = await _context.Workers
+            .Where(w => w.id == id)
+            .ExecuteDeleteAsync();
+
+        if (deleted == 0)
+        {
+            throw new InvalidOperationException($"Mitarbeiter mit ID {id} wurde nicht gefunden.");
+        }
     }
 }
