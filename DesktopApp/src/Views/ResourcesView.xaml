@@ -132,6 +132,7 @@
                                        FontWeight="SemiBold"
                                        Foreground="#1976D2" />
                             <Button Grid.Column="1" Margin="0" Width="40" Height="40"
+                                    Command="{Binding EditCommand}"
                                     Style="{StaticResource MaterialDesignIconButton}"
                                     ToolTip="Bearbeiten">
                                 <materialDesign:PackIcon Kind="Pencil" />

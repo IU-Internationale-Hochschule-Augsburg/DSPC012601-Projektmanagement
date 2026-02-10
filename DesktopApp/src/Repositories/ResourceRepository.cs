@@ -38,6 +38,18 @@ public class ResourceRepository : IResourceRepository
         return model;
     }
     
+    public async Task UpdateAsync(ResourceModel model)
+    {
+        var entity = await _context.Ressources.FindAsync(model.Id);
+        if (entity != null)
+        {
+            entity.name = model.Name;
+            entity.count = model.Count;
+            // vllt. noch was für die Projekt zuordnung hinzufügen?
+            await _context.SaveChangesAsync();
+        }
+    }
+    
     public async Task DeleteAsync(int id)
     {
         var deleted = await _context.Ressources
