@@ -118,8 +118,31 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <TextBlock Text="Details" FontSize="24" FontWeight="SemiBold" Foreground="#1976D2"
-                                   Margin="0,0,0,20" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Details"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1976D2" />
+                            <Button Grid.Column="1" Margin="0" Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Bearbeiten">
+                                <materialDesign:PackIcon Kind="Pencil" />
+                            </Button>
+                            <Button Grid.Column="2" Margin="0" Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Löschen">
+                                <!-- Click="DeleteButton_Click" > -->
+                                <materialDesign:PackIcon Kind="Delete" />
+                            </Button>
+                        </Grid>
                         <TextBlock Text="{Binding SelectedResource.Name}" FontSize="18" FontWeight="SemiBold" />
                         <TextBlock Text="{Binding SelectedResource.Count, StringFormat='Anzahl: {0}'}"
                                    Margin="0,10,0,0" />
