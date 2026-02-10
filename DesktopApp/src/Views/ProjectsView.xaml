@@ -1,323 +1,349 @@
 <UserControl x:Class="Projektmanagement_DesktopApp.Views.ProjectsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Projektmanagement_DesktopApp.Views"
              xmlns:viewModels="clr-namespace:Projektmanagement_DesktopApp.ViewModels"
-             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/src/Views/Ressources/ProjectsDialogs.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.5*" MinWidth="300"/>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="2*" MinWidth="400"/>
-        </Grid.ColumnDefinitions>
+    <materialDesign:DialogHost Identifier="RootDialog">
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" MinWidth="300" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="2*" MinWidth="400" />
+            </Grid.ColumnDefinitions>
 
-        <!-- Linke Seite: Projektverwaltung -->
-        <Border Grid.Column="0" 
-                BorderBrush="#E0E0E0" 
-                BorderThickness="1" 
-                CornerRadius="4" 
-                Padding="15"
-                Background="White">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- Linke Seite: Projektverwaltung -->
+            <Border Grid.Column="0"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="15"
+                    Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <!-- Header mit Titel und Plus-Button -->
-                <Grid Grid.Row="0" Margin="0,0,0,15">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" 
-                               Text="{Binding HeaderText}"
-                               FontSize="24" 
-                               FontWeight="SemiBold"
-                               VerticalAlignment="Center"
-                               Foreground="#1976D2"/>
-
-                    <Button Grid.Column="1" 
-                            Command="{Binding AddProjectCommand}"
-                            Width="36" 
-                            Height="36"
-                            Background="#1976D2"
-                            BorderThickness="0"
-                            Cursor="Hand"
-                            ToolTip="Neues Projekt erstellen">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}" 
-                                                    CornerRadius="18"
-                                                    BorderThickness="0">
-                                                <ContentPresenter HorizontalAlignment="Center" 
-                                                                VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#1565C0"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <Path Data="M 0,6 L 12,6 M 6,0 L 6,12" 
-                              Stroke="White" 
-                              StrokeThickness="3" 
-                              Stretch="Uniform"
-                              Width="16" 
-                              Height="16"
-                              HorizontalAlignment="Center" 
-                              VerticalAlignment="Center"/>
-                    </Button>
-                </Grid>
-
-                <!-- Projektliste -->
-                <ScrollViewer Grid.Row="1" 
-                              VerticalScrollBarVisibility="Auto"
-                              Visibility="{Binding IsProjectListVisible, Converter={StaticResource BoolToVisibility}}">
-                    <ItemsControl ItemsSource="{Binding Projects}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="#E0E0E0" 
-                                        BorderThickness="0,0,0,1" 
-                                        Padding="10,12"
-                                        Background="Transparent"
-                                        Cursor="Hand">
-                                    <Border.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick" 
-                                                    Command="{Binding DataContext.SelectProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}"/>
-                                    </Border.InputBindings>
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#F5F5F5"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Name}" 
-                                                   FontSize="16" 
-                                                   FontWeight="Medium"
-                                                   Foreground="#212121"/>
-                                        <TextBlock Text="{Binding Description}" 
-                                                   FontSize="12" 
-                                                   Foreground="#757575"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   Margin="0,4,0,0"
-                                                   Visibility="{Binding Description, Converter={StaticResource BoolToVisibility}}"/>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <!-- Neues Projekt Eingabeformular -->
-                <StackPanel Grid.Row="1" 
-                            Visibility="{Binding IsAddingNewProject, Converter={StaticResource BoolToVisibility}}"
-                            Margin="0,10,0,0">
-                    <TextBlock Text="Projektname *" 
-                               FontSize="14" 
-                               Foreground="#424242"
-                               Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding NewProjectName, UpdateSourceTrigger=PropertyChanged}" 
-                             Padding="8"
-                             FontSize="14"
-                             BorderBrush="#BDBDBD"
-                             BorderThickness="1"
-                             Margin="0,0,0,15"/>
-
-                    <TextBlock Text="Beschreibung" 
-                               FontSize="14" 
-                               Foreground="#424242"
-                               Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding NewProjectDescription, UpdateSourceTrigger=PropertyChanged}" 
-                             Padding="8"
-                             FontSize="14"
-                             Height="100"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             BorderBrush="#BDBDBD"
-                             BorderThickness="1"/>
-                </StackPanel>
-
-                <!-- Action Buttons (Speichern/Abbrechen) -->
-                <StackPanel Grid.Row="2" 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Right"
-                            Margin="0,15,0,0"
-                            Visibility="{Binding IsAddingNewProject, Converter={StaticResource BoolToVisibility}}">
-                    <Button Content="Abbrechen" 
-                            Command="{Binding CancelAddProjectCommand}"
-                            Width="100" 
-                            Height="36"
-                            Margin="0,0,10,0"
-                            Background="White"
-                            BorderBrush="#BDBDBD"
-                            BorderThickness="1"
-                            Foreground="#424242"
-                            Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#F5F5F5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    
-                    <Button Content="Speichern" 
-                            Command="{Binding SaveProjectCommand}"
-                            Width="100" 
-                            Height="36"
-                            Background="#1976D2"
-                            BorderThickness="0"
-                            Foreground="White"
-                            FontWeight="Medium"
-                            Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#1565C0"/>
-                                    </Trigger>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Background" Value="#E0E0E0"/>
-                                        <Setter Property="Foreground" Value="#9E9E9E"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- Rechte Seite: Projekt-Details -->
-        <Border Grid.Column="2" 
-                BorderBrush="#E0E0E0" 
-                BorderThickness="1" 
-                CornerRadius="4" 
-                Padding="20"
-                Background="White">
-            <Grid>
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedProject}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    <TextBlock Text="Projektdetails" 
-                               FontSize="24" 
-                               FontWeight="SemiBold"
-                               Foreground="#1976D2"
-                               Margin="0,0,0,20"/>
-
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <!-- Header mit Titel und Plus-Button -->
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" 
-                                   Text="Projektname:" 
-                                   FontSize="14" 
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding HeaderText}"
+                                   FontSize="24"
                                    FontWeight="SemiBold"
-                                   Foreground="#424242"
-                                   Margin="0,0,0,15"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" 
-                                   Text="{Binding SelectedProject.Name}" 
-                                   FontSize="14"
-                                   Foreground="#212121"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,15"/>
+                                   VerticalAlignment="Center"
+                                   Foreground="#1976D2" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" 
-                                   Text="Beschreibung:" 
-                                   FontSize="14" 
-                                   FontWeight="SemiBold"
-                                   Foreground="#424242"
-                                   Margin="0,0,0,15"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" 
-                                   Text="{Binding SelectedProject.Description}" 
-                                   FontSize="14"
-                                   Foreground="#212121"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,15"/>
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" 
-                                   Text="Erstellt am:" 
-                                   FontSize="14" 
-                                   FontWeight="SemiBold"
-                                   Foreground="#424242"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" 
-                                   Text="{Binding SelectedProject.CreatedAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" 
-                                   FontSize="14"
-                                   Foreground="#212121"/>
+                        <Button Grid.Column="1"
+                                Command="{Binding AddProjectCommand}"
+                                Width="36"
+                                Height="36"
+                                Background="#1976D2"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                ToolTip="Neues Projekt erstellen">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="18"
+                                                        BorderThickness="0">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#1565C0" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Path Data="M 0,6 L 12,6 M 6,0 L 6,12"
+                                  Stroke="White"
+                                  StrokeThickness="3"
+                                  Stretch="Uniform"
+                                  Width="16"
+                                  Height="16"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                        </Button>
                     </Grid>
-                </StackPanel>
 
-                <!-- Platzhalter wenn kein Projekt ausgewählt -->
-                <StackPanel HorizontalAlignment="Center" 
-                            VerticalAlignment="Center">
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedProject}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    <TextBlock Text="📋" 
-                               FontSize="48" 
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,10"/>
-                    <TextBlock Text="Kein Projekt ausgewählt" 
-                               FontSize="16" 
-                               Foreground="#757575"
-                               HorizontalAlignment="Center"/>
-                    <TextBlock Text="Wählen Sie ein Projekt aus der Liste oder erstellen Sie ein neues" 
-                               FontSize="12" 
-                               Foreground="#9E9E9E"
-                               HorizontalAlignment="Center"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               Margin="0,5,0,0"/>
-                </StackPanel>
-            </Grid>
-        </Border>
-    </Grid>
+                    <!-- Projektliste -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Visibility="{Binding IsProjectListVisible, Converter={StaticResource BoolToVisibility}}">
+                        <ItemsControl ItemsSource="{Binding Projects}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#E0E0E0"
+                                            BorderThickness="0,0,0,1"
+                                            Padding="10,12"
+                                            Background="Transparent"
+                                            Cursor="Hand">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick"
+                                                          Command="{Binding DataContext.SelectProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                          CommandParameter="{Binding}" />
+                                        </Border.InputBindings>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#F5F5F5" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="16"
+                                                       FontWeight="Medium"
+                                                       Foreground="#212121" />
+                                            <TextBlock Text="{Binding Description}"
+                                                       FontSize="12"
+                                                       Foreground="#757575"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="0,4,0,0"
+                                                       Visibility="{Binding Description, Converter={StaticResource BoolToVisibility}}" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- Neues Projekt Eingabeformular -->
+                    <StackPanel Grid.Row="1"
+                                Visibility="{Binding IsAddingNewProject, Converter={StaticResource BoolToVisibility}}"
+                                Margin="0,10,0,0">
+                        <TextBlock Text="Projektname *"
+                                   FontSize="14"
+                                   Foreground="#424242"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding NewProjectName, UpdateSourceTrigger=PropertyChanged}"
+                                 Padding="8"
+                                 FontSize="14"
+                                 BorderBrush="#BDBDBD"
+                                 BorderThickness="1"
+                                 Margin="0,0,0,15" />
+
+                        <TextBlock Text="Beschreibung"
+                                   FontSize="14"
+                                   Foreground="#424242"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding NewProjectDescription, UpdateSourceTrigger=PropertyChanged}"
+                                 Padding="8"
+                                 FontSize="14"
+                                 Height="100"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 BorderBrush="#BDBDBD"
+                                 BorderThickness="1" />
+                    </StackPanel>
+
+                    <!-- Action Buttons (Speichern/Abbrechen) -->
+                    <StackPanel Grid.Row="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,15,0,0"
+                                Visibility="{Binding IsAddingNewProject, Converter={StaticResource BoolToVisibility}}">
+                        <Button Content="Abbrechen"
+                                Command="{Binding CancelAddProjectCommand}"
+                                Width="100"
+                                Height="36"
+                                Margin="0,0,10,0"
+                                Background="White"
+                                BorderBrush="#BDBDBD"
+                                BorderThickness="1"
+                                Foreground="#424242"
+                                Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F5F5F5" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Content="Speichern"
+                                Command="{Binding SaveProjectCommand}"
+                                Width="100"
+                                Height="36"
+                                Background="#1976D2"
+                                BorderThickness="0"
+                                Foreground="White"
+                                FontWeight="Medium"
+                                Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#1565C0" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" Value="#E0E0E0" />
+                                            <Setter Property="Foreground" Value="#9E9E9E" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Rechte Seite: Projekt-Details -->
+            <Border Grid.Column="2"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="20"
+                    Background="White">
+                <Grid>
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedProject}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Projektdetails" Grid.Column="0"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1976D2" />
+                            <Button Grid.Column="1" Margin="0" Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Bearbeiten">
+                                <materialDesign:PackIcon Kind="Pencil" />
+                            </Button>
+                            <Button Grid.Column="2" Margin="0" Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Löschen"
+                                    Click="DeleteButton_Click">
+                                <materialDesign:PackIcon Kind="Delete" />
+                            </Button>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="Projektname:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#424242"
+                                       Margin="0,0,0,15" />
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding SelectedProject.Name}"
+                                       FontSize="14"
+                                       Foreground="#212121"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,15" />
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="Beschreibung:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#424242"
+                                       Margin="0,0,0,15" />
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       Text="{Binding SelectedProject.Description}"
+                                       FontSize="14"
+                                       Foreground="#212121"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,15" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="Erstellt am:"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#424242" />
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       Text="{Binding SelectedProject.CreatedAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                       FontSize="14"
+                                       Foreground="#212121" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Platzhalter wenn kein Projekt ausgewählt -->
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedProject}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="📋"
+                                   FontSize="48"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,10" />
+                        <TextBlock Text="Kein Projekt ausgewählt"
+                                   FontSize="16"
+                                   Foreground="#757575"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Wählen Sie ein Projekt aus der Liste oder erstellen Sie ein neues"
+                                   FontSize="12"
+                                   Foreground="#9E9E9E"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Margin="0,5,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </materialDesign:DialogHost>
 </UserControl>
