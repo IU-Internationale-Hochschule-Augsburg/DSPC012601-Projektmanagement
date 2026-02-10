@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using Projektmanagement_DesktopApp.Models;
 using Projektmanagement_DesktopApp.Repositories;
-using Projektmanagement_DesktopApp.Services;
 
 namespace Projektmanagement_DesktopApp.ViewModels;
 
@@ -18,13 +17,12 @@ public class ProjectsViewModel : ViewModelBase
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         Projects = new ObservableCollection<ProjectModel>();
-        
+
         AddProjectCommand = new RelayCommand(_ => StartAdding());
         SaveProjectCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelAddProjectCommand = new RelayCommand(_ => CancelAdding());
         SelectProjectCommand = new RelayCommand(p => SelectedProject = p as ProjectModel);
-        UpdateTimelineCommand = new RelayCommand(async _ => await UpdateTimelineAsync(), _ => SelectedProject != null);
-        
+
         _ = LoadAsync();
     }
 
@@ -74,7 +72,6 @@ public class ProjectsViewModel : ViewModelBase
     public RelayCommand SaveProjectCommand { get; }
     public RelayCommand CancelAddProjectCommand { get; }
     public RelayCommand SelectProjectCommand { get; }
-    public RelayCommand UpdateTimelineCommand { get; }
 
     private async System.Threading.Tasks.Task LoadAsync()
     {
@@ -103,8 +100,8 @@ public class ProjectsViewModel : ViewModelBase
     {
         try
         {
-            var model = new ProjectModel 
-            { 
+            var model = new ProjectModel
+            {
                 Name = NewProjectName.Trim(),
                 Description = NewProjectDescription.Trim()
             };
@@ -121,28 +118,20 @@ public class ProjectsViewModel : ViewModelBase
 
     private void CancelAdding() => IsAddingNewProject = false;
 
-    private async System.Threading.Tasks.Task UpdateTimelineAsync()
+    public async System.Threading.Tasks.Task DeleteSelectedProjectAsync()
     {
-        if (SelectedProject == null)
+        if (SelectedProject != null)
         {
-            MessageBox.Show("Bitte wählen Sie ein Projekt aus.");
-            return;
-        }
-
-        try
-        {
-            var dbContext = App.DbContext;
-            var taskService = new TaskService(new TaskRepository(dbContext));
-            await taskService.RecalculateProjectTimelineAsync(SelectedProject.Id, true);
-            MessageBox.Show("Timeline erfolgreich aktualisiert.");
-        }
-        catch (InvalidOperationException ex)
-        {
-            MessageBox.Show($"Fehler beim Aktualisieren der Timeline: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Unerwarteter Fehler: {ex.Message}");
+            try
+            {
+                await _projectRepository.DeleteAsync(SelectedProject.Id);
+                Projects.Remove(SelectedProject);
+                SelectedProject = null;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Fehler beim Löschen: {ex.Message}");
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.DataSource;
 using Projektmanagement_DesktopApp.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Projektmanagement_DesktopApp.Repositories;
 
@@ -35,6 +36,18 @@ public class ResourceRepository : IResourceRepository
         model.Id = entity.id;
         model.CreatedAt = entity.createDate;
         return model;
+    }
+    
+    public async Task DeleteAsync(int id)
+    {
+        var deleted = await _context.Ressources
+            .Where(p => p.id == id)
+            .ExecuteDeleteAsync();
+
+        if (deleted == 0)
+        {
+            throw new InvalidOperationException($"Resource mit ID {id} wurde nicht gefunden.");
+        }
     }
 
     private static ResourceModel MapToModel(Ressource entity)

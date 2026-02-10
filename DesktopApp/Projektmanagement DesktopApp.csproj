@@ -28,4 +28,13 @@
       <Content Include="obj\Debug\net10.0-windows\Projektmanagement DesktopApp_MarkupCompile.lref" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Page Update="src\Views\Ressources\ResourcesDialogs.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+    </ItemGroup>
+
 </Project>

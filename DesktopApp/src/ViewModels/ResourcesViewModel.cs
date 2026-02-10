@@ -17,12 +17,12 @@ public class ResourcesViewModel : ViewModelBase
     {
         _resourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
         Resources = new ObservableCollection<ResourceModel>();
-        
+
         AddCommand = new RelayCommand(_ => StartAdding());
         SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelCommand = new RelayCommand(_ => CancelAdding());
         SelectCommand = new RelayCommand(r => SelectedResource = r as ResourceModel);
-        
+
         _ = LoadAsync();
     }
 
@@ -113,4 +113,21 @@ public class ResourcesViewModel : ViewModelBase
     }
 
     private void CancelAdding() => IsAddingNew = false;
+
+    public async System.Threading.Tasks.Task DeleteSelectedResourceAsync()
+    {
+        if (SelectedResource != null)
+        {
+            try
+            {
+                await _resourceRepository.DeleteAsync(SelectedResource.Id);
+                Resources.Remove(SelectedResource);
+                SelectedResource = null;
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Fehler beim Löschen: {ex.Message}");
+            }
+        }
+    }
 }
