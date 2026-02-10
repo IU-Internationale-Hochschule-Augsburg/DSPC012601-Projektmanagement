@@ -6,4 +6,5 @@ public interface IResourceRepository
 {
     Task<IEnumerable<ResourceModel>> GetAllAsync();
     Task<ResourceModel> AddAsync(ResourceModel resource);
+    Task DeleteAsync(int id);
 }
