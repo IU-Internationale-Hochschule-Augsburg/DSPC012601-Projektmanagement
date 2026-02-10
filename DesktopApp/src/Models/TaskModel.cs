@@ -14,6 +14,10 @@ public class TaskModel
     
     public int WorkerId { get; set; }
     public int ProjectId { get; set; }
+
+    // Relationship info
+    public int? PreviousTaskId { get; set; }
+    public int? NextTaskId { get; set; }
     
     public DateTime CreatedAt { get; set; }
 

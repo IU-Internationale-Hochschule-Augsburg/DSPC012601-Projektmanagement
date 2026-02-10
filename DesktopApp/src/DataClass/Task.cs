@@ -1,4 +1,4 @@
-﻿namespace Projektmanagement_DesktopApp.DataClass;
+﻿﻿namespace Projektmanagement_DesktopApp.DataClass;
 
 public class Task : DataClass
 {
@@ -10,4 +10,8 @@ public class Task : DataClass
 
     public int workerUid { get; set; }
     public int projectUid { get; set; }
+    
+    // Allow null to indicate no predecessor/successor
+    public int? previousTaskUid { get; set; }
+    public int? nextTaskUid { get; set; }
 }

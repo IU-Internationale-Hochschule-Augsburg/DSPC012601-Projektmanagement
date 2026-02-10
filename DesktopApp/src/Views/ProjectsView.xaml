@@ -286,6 +286,29 @@
                                    FontSize="14"
                                    Foreground="#212121"/>
                     </Grid>
+
+                    <!-- Button for timeline update -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button Content="Timeline aktualisieren"
+                                Command="{Binding UpdateTimelineCommand}"
+                                Width="170"
+                                Height="36"
+                                Background="#1976D2"
+                                BorderThickness="0"
+                                Foreground="White"
+                                FontWeight="Medium"
+                                Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#1565C0"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Platzhalter wenn kein Projekt ausgewählt -->

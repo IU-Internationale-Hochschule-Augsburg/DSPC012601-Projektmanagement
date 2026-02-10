@@ -20,10 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="src\Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="README_IMPLEMENTIERUNG.md" />
     </ItemGroup>
 
