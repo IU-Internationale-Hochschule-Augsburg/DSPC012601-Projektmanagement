@@ -106,11 +106,13 @@ public class WorkersViewModel : ViewModelBase
         {
             if (SelectedWorker != null)
             {
+                // Update-Modus
                 SelectedWorker.Name = NewName.Trim();
                 await _workerRepository.UpdateAsync(SelectedWorker);
             }
             else
             {
+                // Add-Modus
                 var model = new WorkerModel { Name = NewName.Trim() };
                 var saved = await _workerRepository.AddAsync(model);
                 Workers.Add(saved);

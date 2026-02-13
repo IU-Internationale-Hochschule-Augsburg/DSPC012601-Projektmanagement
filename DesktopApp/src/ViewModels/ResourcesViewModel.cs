@@ -12,7 +12,8 @@ public class ResourcesViewModel : ViewModelBase
     private ResourceModel? _selectedResource;
     private string _newName = string.Empty;
     private int _newCount;
-
+    public RelayCommand EditCommand { get; }
+    
     public ResourcesViewModel(IResourceRepository resourceRepository)
     {
         _resourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
@@ -22,7 +23,8 @@ public class ResourcesViewModel : ViewModelBase
         SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelCommand = new RelayCommand(_ => CancelAdding());
         SelectCommand = new RelayCommand(r => SelectedResource = r as ResourceModel);
-
+        
+        EditCommand = new RelayCommand(_ => StartEditing());        
         _ = LoadAsync();
     }
 
@@ -89,9 +91,23 @@ public class ResourcesViewModel : ViewModelBase
 
     private void StartAdding()
     {
+        SelectedResource = null;
         NewName = string.Empty;
         NewCount = 0;
         IsAddingNew = true;
+    }
+    
+    private void StartEditing()
+    {
+        if (SelectedResource == null) return;
+
+        NewName = SelectedResource.Name; 
+        NewCount = SelectedResource.Count;
+
+        IsAddingNew = true; 
+    
+        // Header aktualisieren
+        OnPropertyChanged(nameof(HeaderText));
     }
 
     private bool CanSave() => !string.IsNullOrWhiteSpace(NewName);
@@ -100,11 +116,21 @@ public class ResourcesViewModel : ViewModelBase
     {
         try
         {
-            var model = new ResourceModel { Name = NewName.Trim(), Count = NewCount };
-            var saved = await _resourceRepository.AddAsync(model);
-            Resources.Add(saved);
+            if (SelectedResource != null)
+            {
+                // Update-Modus
+                SelectedResource.Name = NewName.Trim();
+                SelectedResource.Count = NewCount;
+                await _resourceRepository.UpdateAsync(SelectedResource);
+            }
+            else
+            {
+                // Add-Modus
+                var model = new ResourceModel { Name = NewName.Trim(), Count = NewCount };
+                var saved = await _resourceRepository.AddAsync(model);
+                Resources.Add(saved);
+            }
             IsAddingNew = false;
-            SelectedResource = saved;
         }
         catch (InvalidOperationException ex)
         {
