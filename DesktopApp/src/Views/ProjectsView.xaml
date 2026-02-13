@@ -60,7 +60,8 @@
                                 Background="#1976D2"
                                 BorderThickness="0"
                                 Cursor="Hand"
-                                ToolTip="Neues Projekt erstellen">
+                                ToolTip="Neues Projekt erstellen"
+                                Visibility="{Binding IsProjectListVisible, Converter={StaticResource BoolToVisibility}}">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Template">
@@ -139,7 +140,7 @@
 
                     <!-- Neues Projekt Eingabeformular -->
                     <StackPanel Grid.Row="1"
-                                Visibility="{Binding IsAddingNewProject, Converter={StaticResource BoolToVisibility}}"
+                                Visibility="{Binding IsAddingOrEditing, Converter={StaticResource BoolToVisibility}}"
                                 Margin="0,10,0,0">
                         <TextBlock Text="Projektname *"
                                    FontSize="14"
@@ -172,9 +173,9 @@
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Right"
                                 Margin="0,15,0,0"
-                                Visibility="{Binding IsAddingNewProject, Converter={StaticResource BoolToVisibility}}">
+                                Visibility="{Binding IsAddingOrEditing, Converter={StaticResource BoolToVisibility}}">
                         <Button Content="Abbrechen"
-                                Command="{Binding CancelAddProjectCommand}"
+                                Command="{Binding CancelAddEditProjectCommand}"
                                 Width="100"
                                 Height="36"
                                 Margin="0,0,10,0"
@@ -254,6 +255,7 @@
                                        FontWeight="SemiBold"
                                        Foreground="#1976D2" />
                             <Button Grid.Column="1" Margin="0" Width="40" Height="40"
+                                    Command="{Binding EditProjectCommand}"
                                     Style="{StaticResource MaterialDesignIconButton}"
                                     ToolTip="Bearbeiten">
                                 <materialDesign:PackIcon Kind="Pencil" />
