@@ -49,6 +49,7 @@
                     </Button>
                 </Grid>
 
+                <!-- Aufgabenliste -->
                 <ScrollViewer Grid.Row="1" Visibility="{Binding IsListVisible, Converter={StaticResource BoolToVisibility}}">
                     <ItemsControl ItemsSource="{Binding Tasks}">
                         <ItemsControl.ItemTemplate>
@@ -59,6 +60,18 @@
                                     </Border.InputBindings>
                                     <StackPanel>
                                         <TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="Medium"/>
+                                        <TextBlock Text="{Binding Description}" FontSize="12" Foreground="#757575" TextTrimming="CharacterEllipsis" MaxWidth="280"
+                                                   Margin="0,2,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Description}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
                                         <TextBlock Text="{Binding StartDate, StringFormat='Start: {0:dd.MM.yyyy}'}" FontSize="12" Foreground="#757575"/>
                                     </StackPanel>
                                 </Border>
@@ -67,9 +80,17 @@
                     </ItemsControl>
                 </ScrollViewer>
 
+                <!-- Neues Aufgabe Eingabeformular -->
                 <StackPanel Grid.Row="1" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}">
-                    <TextBlock Text="Dauer (Stunden) *" Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding NewDuration, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,15"/>
+                    <TextBlock Text="Beschreibung" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged}"
+                             Padding="8" FontSize="14" Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto" BorderBrush="#BDBDBD" BorderThickness="1"
+                             Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Dauer (Stunden) *" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewDuration, UpdateSourceTrigger=PropertyChanged}" Padding="8" FontSize="14"
+                             BorderBrush="#BDBDBD" BorderThickness="1" Margin="0,0,0,15"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}">
@@ -79,8 +100,10 @@
             </Grid>
         </Border>
 
+        <!-- Rechte Seite: Details -->
         <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="20" Background="White">
             <Grid>
+                <!-- Detail-Ansicht bei ausgewählter Aufgabe -->
                 <StackPanel>
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
@@ -92,11 +115,72 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
+
                     <TextBlock Text="Details" FontSize="24" FontWeight="SemiBold" Foreground="#1976D2" Margin="0,0,0,20"/>
-                    <TextBlock Text="{Binding SelectedTask.DisplayName}" FontSize="18" FontWeight="SemiBold"/>
-                    <TextBlock Text="{Binding SelectedTask.StartDate, StringFormat='Start: {0:dd.MM.yyyy}'}" Margin="0,10,0,0"/>
-                    <TextBlock Text="{Binding SelectedTask.EndDate, StringFormat='Ende: {0:dd.MM.yyyy}'}" Margin="0,5,0,0"/>
+
+                    <!-- Detail-Grid -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Aufgabe:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedTask.DisplayName}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Beschreibung:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedTask.Description}" FontSize="14" Foreground="#212121" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Start:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedTask.StartDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ende:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedTask.EndDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Dauer:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedTask.Duration, StringFormat='{}{0} Stunden'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+                    </Grid>
+
+                    <!-- Timeline aktualisieren Button -->
+                    <Button Content="📅 Timeline aktualisieren"
+                            Command="{Binding RecalculateTimelineCommand}"
+                            Height="40" Margin="0,25,0,0"
+                            HorizontalAlignment="Stretch"
+                            Background="#1976D2" Foreground="White" FontSize="14" FontWeight="Medium"
+                            BorderThickness="0" Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="4" Padding="10,0">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#1565C0"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Background" Value="#E0E0E0"/>
+                                        <Setter Property="Foreground" Value="#9E9E9E"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
+
+                <!-- Platzhalter wenn keine Aufgabe ausgewählt -->
                 <TextBlock Text="Keine Aufgabe ausgewählt" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#757575">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">

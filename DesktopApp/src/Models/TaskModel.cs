@@ -7,6 +7,8 @@ public class TaskModel
 {
     public int Id { get; set; }
     
+    public string Description { get; set; } = string.Empty;
+    
     public int Duration { get; set; }
     
     public DateTime StartDate { get; set; } = DateTime.Now;
@@ -15,9 +17,17 @@ public class TaskModel
     
     public Worker? Worker { get; set; }
     public Project? Project { get; set; }
+    public int WorkerId { get; set; }
+    public int ProjectId { get; set; }
+
+    // Relationship info
+    public int? PreviousTaskId { get; set; }
+    public int? NextTaskId { get; set; }
     
     public DateTime CreatedAt { get; set; }
 
     // Hilfseigenschaft für die Anzeige
-    public string DisplayName => $"Aufgabe #{Id} ({Duration}h)";
+    public string DisplayName => string.IsNullOrWhiteSpace(Description)
+        ? $"Aufgabe #{Id} ({Duration}h)"
+        : $"{Description} ({Duration}h)";
 }
