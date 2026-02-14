@@ -26,28 +26,28 @@ public class TaskRepository : ITaskRepository
     {
         var entity = new TaskEntity
         {
-            description = model.Description,
-            duration = model.Duration,
-            startDate = model.StartDate,
-            endDate = model.EndDate,
-            previousTaskUid = model.PreviousTaskId,
-            nextTaskUid = model.NextTaskId,
-            worker = model.Worker,
-            project = model.Project
+            Description = model.Description,
+            Duration = model.Duration,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate,
+            PreviousTaskUid = model.PreviousTaskId,
+            NextTaskUid = model.NextTaskId,
+            Worker = model.Worker,
+            Project = model.Project
         };
 
         _context.Task.Add(entity);
         await _context.SaveChangesAsync();
 
-        model.Id = entity.id;
-        model.CreatedAt = entity.createDate;
+        model.Id = entity.Id;
+        model.CreatedAt = entity.CreateDate;
         return model;
     }
 
     public async Task<IEnumerable<TaskModel>> GetAllForProjectAsync(Project project)
     {
         var tasks = await _context.Task
-            .Where(t => t.project == project)
+            .Where(t => t.Project == project)
             .ToListAsync();
         return tasks.Select(MapToModel);
     }
@@ -55,7 +55,7 @@ public class TaskRepository : ITaskRepository
     public async Task<IEnumerable<TaskModel>> getTasksByProjectId(int projectId)
     {
         var tasks = await _context.Task
-            .Where(t => t.project.id == projectId)
+            .Where(t => t.Project.Id == projectId)
             .ToListAsync();
         return tasks.Select(MapToModel);
     }
@@ -68,26 +68,26 @@ public class TaskRepository : ITaskRepository
 
     public async Task<TaskModel?> GetByIdAsync(int id)
     {
-        var entity = await _context.Task.FirstOrDefaultAsync(t => t.id == id);
+        var entity = await _context.Task.FirstOrDefaultAsync(t => t.Id == id);
         return entity == null ? null : MapToModel(entity);
     }
 
     public async Task<TaskModel> UpdateAsync(TaskModel task)
     {
-        var entity = await _context.Task.FirstOrDefaultAsync(t => t.id == task.Id);
+        var entity = await _context.Task.FirstOrDefaultAsync(t => t.Id == task.Id);
         if (entity == null) throw new InvalidOperationException($"Task with id {task.Id} not found");
 
         // Update fields
-        entity.description = task.Description;
-        entity.duration = task.Duration;
-        entity.startDate = task.StartDate;
-        entity.endDate = task.EndDate;
-        entity.worker = task.Worker;
-        entity.project = task.Project;
+        entity.Description = task.Description;
+        entity.Duration = task.Duration;
+        entity.StartDate = task.StartDate;
+        entity.EndDate = task.EndDate;
+        entity.Worker = task.Worker;
+        entity.Project = task.Project;
 
         // update predecessor/successor
-        entity.previousTaskUid = task.PreviousTaskId;
-        entity.nextTaskUid = task.NextTaskId;
+        entity.PreviousTaskUid = task.PreviousTaskId;
+        entity.NextTaskUid = task.NextTaskId;
 
         // Save
         await _context.SaveChangesAsync();
@@ -99,29 +99,29 @@ public class TaskRepository : ITaskRepository
     {
         return new TaskModel
         {
-            Id = entity.id,
-            Description = entity.description,
-            Duration = entity.duration,
-            StartDate = entity.startDate,
-            EndDate = entity.endDate,
-            Worker = entity.worker,
-            Project = entity.project,
-            PreviousTaskId = entity.previousTaskUid,
-            NextTaskId = entity.nextTaskUid,
-            CreatedAt = entity.createDate
+            Id = entity.Id,
+            Description = entity.Description,
+            Duration = entity.Duration,
+            StartDate = entity.StartDate,
+            EndDate = entity.EndDate,
+            Worker = entity.Worker,
+            Project = entity.Project,
+            PreviousTaskId = entity.PreviousTaskUid,
+            NextTaskId = entity.NextTaskUid,
+            CreatedAt = entity.CreateDate
         };
     }
 
     // Helper to map model back to entity when needed (not used currently)
     private static void MapToEntity(TaskModel model, TaskEntity entity)
     {
-        entity.description = model.Description;
-        entity.duration = model.Duration;
-        entity.startDate = model.StartDate;
-        entity.endDate = model.EndDate;
-        entity.worker = model.Worker;
-        entity.project = model.Project;
-        entity.previousTaskUid = model.PreviousTaskId;
-        entity.nextTaskUid = model.NextTaskId;
+        entity.Description = model.Description;
+        entity.Duration = model.Duration;
+        entity.StartDate = model.StartDate;
+        entity.EndDate = model.EndDate;
+        entity.Worker = model.Worker;
+        entity.Project = model.Project;
+        entity.PreviousTaskUid = model.PreviousTaskId;
+        entity.NextTaskUid = model.NextTaskId;
     }
 }

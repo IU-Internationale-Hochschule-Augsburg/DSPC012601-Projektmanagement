@@ -2,15 +2,15 @@
 
 public abstract class DataClass
 {
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    public bool isActive { get; set; }
+    public bool IsActive { get; set; }
 
-    public DateTime createDate { get; protected set; }
+    public DateTime CreateDate { get; protected set; }
 
     protected DataClass()
     {
-        createDate = DateTime.UtcNow;
-        isActive = true;
+        CreateDate = DateTime.UtcNow;
+        IsActive = true;
     }
 }

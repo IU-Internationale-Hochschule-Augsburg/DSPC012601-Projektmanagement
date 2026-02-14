@@ -2,17 +2,17 @@
 
 public class Task : DataClass
 {
-    public string description { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     
-    public int duration { get; set; }
+    public int Duration { get; set; }
 
-    public DateTime startDate { get; set; }
+    public DateTime StartDate { get; set; }
 
-    public DateTime endDate { get; set; }
+    public DateTime EndDate { get; set; }
 
-    public Worker? worker { get; set; }
-    public Project? project { get; set; }
+    public Worker? Worker { get; set; }
+    public Project? Project { get; set; }
     
-    public int? previousTaskUid { get; set; }
-    public int? nextTaskUid { get; set; }
+    public int? PreviousTaskUid { get; set; }
+    public int? NextTaskUid { get; set; }
 }
