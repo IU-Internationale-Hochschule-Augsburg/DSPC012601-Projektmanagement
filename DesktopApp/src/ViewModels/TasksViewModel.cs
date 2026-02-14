@@ -20,6 +20,8 @@ public class TasksViewModel : ViewModelBase
     private int _newDuration;
     private string _newDescription = string.Empty;
     
+    public TasksViewModel(ITaskRepository taskRepository)
+    
     // Selection lists
     private ObservableCollection<ProjectModel> _projects = new();
     private ObservableCollection<WorkerModel> _workers = new();
@@ -287,7 +289,7 @@ public class TasksViewModel : ViewModelBase
             MessageBox.Show($"Fehler beim Speichern: {ex.Message}");
         }
     }
-
+    
     private void CancelAdding() => IsAddingNew = false;
 
     /// <summary>
@@ -360,6 +362,23 @@ public class TasksViewModel : ViewModelBase
                 "Fehler",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+        }
+    }
+    
+    public async System.Threading.Tasks.Task DeleteSelectedTaskAsync()
+    {
+        if (SelectedTask != null)
+        {
+            try
+            {
+                await _taskRepository.DeleteAsync(SelectedTask.Id);
+                Tasks.Remove(SelectedTask);
+                SelectedTask = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Löschen: {ex.Message}");
+            }
         }
     }
 }

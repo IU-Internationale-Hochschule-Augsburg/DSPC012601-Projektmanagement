@@ -4,6 +4,7 @@ using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.DataSource;
 using Projektmanagement_DesktopApp.Models;
 using TaskEntity = Projektmanagement_DesktopApp.DataClass.Task;
+using Task = System.Threading.Tasks.Task;
 
 namespace Projektmanagement_DesktopApp.Repositories;
 
@@ -103,6 +104,18 @@ public class TaskRepository : ITaskRepository
         await _context.SaveChangesAsync();
 
         return MapToModel(entity);
+    }
+    
+    public async Task DeleteAsync(int id)
+    {
+        var deleted = await _context.Task
+            .Where(t => t.Id == id)
+            .ExecuteDeleteAsync();
+
+        if (deleted == 0)
+        {
+            throw new InvalidOperationException($"Vorgang mit ID {id} nicht gefunden.");
+        }
     }
 
     private static TaskModel MapToModel(TaskEntity entity)
