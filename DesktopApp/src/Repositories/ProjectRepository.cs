@@ -37,6 +37,17 @@ public class ProjectRepository : IProjectRepository
         return model;
     }
 
+    public async Task UpdateAsync(ProjectModel project)
+    {
+        var entity = await _context.Projects.FindAsync(project.Id);
+        if (entity != null)
+        {
+            entity.Name = project.Name;
+            entity.Description = project.Description;
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public async Task DeleteAsync(int id)
     {
         var deleted = await _context.Projects
