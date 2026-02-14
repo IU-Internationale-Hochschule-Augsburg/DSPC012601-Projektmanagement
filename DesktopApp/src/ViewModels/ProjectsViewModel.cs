@@ -8,6 +8,9 @@ namespace Projektmanagement_DesktopApp.ViewModels;
 public class ProjectsViewModel : ViewModelBase
 {
     private readonly IProjectRepository _projectRepository;
+    private readonly IResourceRepository _resourceRepository;
+    private readonly ITaskRepository _taskRepository;
+    private readonly IWorkerRepository _workerRepository;
     private bool _isAddingNewProject;
     private bool _isEditingProject;
     private ProjectModel? _selectedProject;
@@ -16,9 +19,13 @@ public class ProjectsViewModel : ViewModelBase
     public RelayCommand EditProjectCommand { get; }
     public RelayCommand CancelAddEditProjectCommand { get; }
 
-    public ProjectsViewModel(IProjectRepository projectRepository)
+    public ProjectsViewModel(IProjectRepository projectRepository, IResourceRepository resourceRepository,
+        ITaskRepository taskRepository, IWorkerRepository workerRepository)
     {
         _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
+        _resourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
+        _taskRepository = taskRepository ?? throw new ArgumentNullException(nameof(taskRepository));
+        _workerRepository = workerRepository ?? throw new ArgumentNullException(nameof(workerRepository));
         Projects = new ObservableCollection<ProjectModel>();
 
         AddProjectCommand = new RelayCommand(_ => StartAdding());
@@ -69,7 +76,22 @@ public class ProjectsViewModel : ViewModelBase
     public ProjectModel? SelectedProject
     {
         get => _selectedProject;
-        set => SetProperty(ref _selectedProject, value);
+        set
+        {
+            SetProperty(ref _selectedProject, value);
+            if (SelectedProject is not null)
+            {
+                LoadTasksAsync(SelectedProject.Id);
+            }
+            
+        }
+    }
+
+    public IEnumerable<TaskModel> SelectedProjectTasks;
+    
+    private async Task LoadTasksAsync(int projectId)
+    {
+        //SelectedProjectTasks = await _taskRepository.GetAllForProjectAsync(projectId);
     }
 
     public string NewProjectName

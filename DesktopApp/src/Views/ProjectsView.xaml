@@ -313,6 +313,41 @@
                                        FontSize="14"
                                        Foreground="#212121" />
                         </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer>
+                                <ItemsControl ItemsSource="{Binding SelectedProjectTasks}">
+                                    <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#E0E0E0"
+                                            BorderThickness="0,0,0,1"
+                                            Padding="10,12"
+                                            Background="Transparent">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="16"
+                                                       FontWeight="Medium"
+                                                       Foreground="#212121" />
+                                            <TextBlock Text="{Binding Duration}"
+                                                       FontSize="12"
+                                                       Foreground="#757575"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="0,4,0,0"
+                                                       Visibility="{Binding Duration, Converter={StaticResource BoolToVisibility}}" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
                     </StackPanel>
 
                     <!-- Platzhalter wenn kein Projekt ausgewählt -->
