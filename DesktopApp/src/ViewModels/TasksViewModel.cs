@@ -161,21 +161,47 @@ public class TasksViewModel : ViewModelBase
     {
         try
         {
-            var data = await _taskRepository.GetAllAsync();
-            Tasks.Clear();
-            foreach (var item in data) Tasks.Add(item);
+            // Load in parallel for performance and isolation
+            var tasksTask = _taskRepository.GetAllAsync();
+            var projectsTask = _projectRepository.GetAllAsync();
+            var workersTask = _workerRepository.GetAllAsync();
 
-            var pData = await _projectRepository.GetAllAsync();
-            Projects.Clear();
-            foreach (var p in pData) Projects.Add(p);
+            try
+            {
+                var tasks = await tasksTask;
+                Tasks.Clear();
+                foreach (var item in tasks) Tasks.Add(item);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Aufgaben: {ex.Message}");
+            }
 
-            var wData = await _workerRepository.GetAllAsync();
-            Workers.Clear();
-            foreach (var w in wData) Workers.Add(w);
+            try
+            {
+                var projects = await projectsTask;
+                Projects.Clear();
+                foreach (var p in projects) Projects.Add(p);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Projekte: {ex.Message}");
+            }
+
+            try
+            {
+                var workers = await workersTask;
+                Workers.Clear();
+                foreach (var w in workers) Workers.Add(w);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Bearbeiter: {ex.Message}");
+            }
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Laden: {ex.Message}");
+            MessageBox.Show($"Genereller Ladefehler: {ex.Message}");
         }
     }
 
@@ -189,12 +215,17 @@ public class TasksViewModel : ViewModelBase
         NewPredecessor = null;
         IsAddingNew = true;
         
+        // Ensure data is fresh
+        _ = LoadAsync();
         UpdatePredecessorsList();
     }
 
-    private void StartEditing()
+    private async void StartEditing()
     {
         if (SelectedTask == null) return;
+
+        // Ensure we have latest lists before setting selection
+        await LoadAsync();
 
         NewDuration = SelectedTask.Duration;
         NewDescription = SelectedTask.Description;

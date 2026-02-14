@@ -155,9 +155,9 @@ public class ProjectsViewModel : ViewModelBase
             Projects.Clear();
             foreach (var item in data) Projects.Add(item);
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Laden: {ex.Message}");
+            MessageBox.Show($"Fehler beim Laden der Projekte: {ex.Message}");
         }
     }
 
@@ -167,10 +167,16 @@ public class ProjectsViewModel : ViewModelBase
         NewProjectName = string.Empty;
         NewProjectDescription = string.Empty;
         IsAddingNewProject = true;
+        
+        // Reload list
+        _ = LoadAsync();
     }
 
-    private void StartEditing()
+    private async void StartEditing()
     {
+        // Reload to ensure we have latest data
+        await LoadAsync();
+
         IsEditingProject = true;
         if (SelectedProject == null) return;
         NewProjectName = SelectedProject.Name;

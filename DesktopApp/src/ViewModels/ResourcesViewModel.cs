@@ -96,17 +96,34 @@ public class ResourcesViewModel : ViewModelBase
     {
         try
         {
-            var data = await _resourceRepository.GetAllAsync();
-            Resources.Clear();
-            foreach (var item in data) Resources.Add(item);
+            var resourcesTask = _resourceRepository.GetAllAsync();
+            var projectsTask = _projectRepository.GetAllAsync();
 
-            var projects = await _projectRepository.GetAllAsync();
-            Projects.Clear();
-            foreach (var p in projects) Projects.Add(p);
+            try
+            {
+                var resources = await resourcesTask;
+                Resources.Clear();
+                foreach (var r in resources) Resources.Add(r);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Ressourcen: {ex.Message}");
+            }
+
+            try
+            {
+                var projects = await projectsTask;
+                Projects.Clear();
+                foreach (var p in projects) Projects.Add(p);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Projekte: {ex.Message}");
+            }
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Laden: {ex.Message}");
+            MessageBox.Show($"Genereller Ladefehler (Ressourcen): {ex.Message}");
         }
     }
 
@@ -117,11 +134,17 @@ public class ResourcesViewModel : ViewModelBase
         NewCount = 0;
         NewProject = null;
         IsAddingNew = true;
+
+        // Ensure fresh project list
+        _ = LoadAsync();
     }
 
-    private void StartEditing()
+    private async void StartEditing()
     {
         if (SelectedResource == null) return;
+
+        // Ensure fresh project list
+        await LoadAsync();
 
         NewName = SelectedResource.Name;
         NewCount = SelectedResource.Count;
