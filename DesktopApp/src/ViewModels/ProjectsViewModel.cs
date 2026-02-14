@@ -136,7 +136,6 @@ public class ProjectsViewModel : ViewModelBase
                 SelectedProject.Name = NewProjectName.Trim();
                 SelectedProject.Description = NewProjectDescription.Trim();
                 await _projectRepository.UpdateAsync(SelectedProject);
-                Console.Out.WriteLine($"Projekt {SelectedProject.Name} saved after editing");
                 IsEditingProject = false;
             }
             else
