@@ -20,7 +20,7 @@ public class TasksViewModel : ViewModelBase
     private int _newDuration;
     private string _newDescription = string.Empty;
     
-    public TasksViewModel(ITaskRepository taskRepository)
+    public RelayCommand DeleteCommand { get; }
     
     // Selection lists
     private ObservableCollection<ProjectModel> _projects = new();
@@ -54,6 +54,8 @@ public class TasksViewModel : ViewModelBase
         RecalculateTimelineCommand = new RelayCommand(
             async _ => await RecalculateTimelineAsync(),
             _ => SelectedTask != null && SelectedTask.ProjectId > 0);
+            
+        DeleteCommand = new RelayCommand(async _ => await DeleteSelectedTaskAsync(), _ => SelectedTask != null);
         
         _ = LoadAsync();
     }
