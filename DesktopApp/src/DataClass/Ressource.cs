@@ -2,9 +2,9 @@
 
 public class Ressource : DataClass
 {
-    public string name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-    public int count { get; set; }
+    public int Count { get; set; }
     
-    public Project? project { get; set; }
+    public Project? Project { get; set; }
 }
