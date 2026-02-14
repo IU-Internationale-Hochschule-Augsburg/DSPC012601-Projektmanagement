@@ -23,11 +23,12 @@ public partial class MainWindow : Window
 
         // Initialize ViewModels
         var projectsVm = new ProjectsViewModel(projectRepo, resourceRepo, taskRepo, workerRepo);
-        var resourcesVm = new ResourcesViewModel(resourceRepo);
-        var tasksVm = new TasksViewModel(taskRepo);
+        var resourcesVm = new ResourcesViewModel(resourceRepo, projectRepo);
+        var tasksVm = new TasksViewModel(taskRepo, projectRepo, workerRepo);
         var workersVm = new WorkersViewModel(workerRepo);
+        var workloadVm = new WorkloadViewModel(taskRepo);
 
         // Set DataContext
-        DataContext = new MainViewModel(projectsVm, resourcesVm, tasksVm, workersVm);
+        DataContext = new MainViewModel(projectsVm, resourcesVm, tasksVm, workersVm, workloadVm);
     }
 }

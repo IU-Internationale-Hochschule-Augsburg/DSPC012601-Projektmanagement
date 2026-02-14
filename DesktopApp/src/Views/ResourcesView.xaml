@@ -91,7 +91,14 @@
                         <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Padding="8"
                                  Margin="0,0,0,15" />
                         <TextBlock Text="Anzahl" Margin="0,0,0,5" />
-                        <TextBox Text="{Binding NewCount, UpdateSourceTrigger=PropertyChanged}" Padding="8" />
+                        <TextBox Text="{Binding NewCount, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,15"/>
+
+                        <TextBlock Text="Projekt" Margin="0,0,0,5" />
+                        <ComboBox ItemsSource="{Binding Projects}" 
+                                  SelectedItem="{Binding NewProject}"
+                                  DisplayMemberPath="Name"
+                                  Padding="8"
+                                  Background="White"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0"
@@ -147,6 +154,10 @@
                         <TextBlock Text="{Binding SelectedResource.Name}" FontSize="18" FontWeight="SemiBold" />
                         <TextBlock Text="{Binding SelectedResource.Count, StringFormat='Anzahl: {0}'}"
                                    Margin="0,10,0,0" />
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="Projekt: " FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding SelectedResource.Project.Name}" />
+                        </StackPanel>
                     </StackPanel>
                     <TextBlock Text="Keine Ressource ausgewählt" HorizontalAlignment="Center"
                                VerticalAlignment="Center"

@@ -45,7 +45,7 @@ public class TaskService
 
         foreach (var t in tasks.Where(t => t.PreviousTaskId.HasValue))
         {
-            var pred = t.PreviousTaskId.Value;
+            var pred = t.PreviousTaskId!.Value;
             if (!taskById.ContainsKey(pred))
                 throw new InvalidOperationException($"Vorgänger-Task mit Id {pred} für Task {t.Id} nicht gefunden.");
 
@@ -138,7 +138,7 @@ public class TaskService
 
         foreach (var t in tasks.Where(t => t.PreviousTaskId.HasValue))
         {
-            var pred = t.PreviousTaskId.Value;
+            var pred = t.PreviousTaskId!.Value;
             if (!taskById.ContainsKey(pred))
                 throw new InvalidOperationException($"Vorgänger-Task mit Id {pred} für Task {t.Id} nicht gefunden.");
 

@@ -19,7 +19,10 @@ public class TaskRepository : ITaskRepository
 
     public async Task<IEnumerable<TaskModel>> GetAllAsync()
     {
-        var tasks = await _context.Task.ToListAsync();
+        var tasks = await _context.Task
+            .Include(t => t.Project)
+            .Include(t => t.Worker)
+            .ToListAsync();
         return tasks.Select(MapToModel);
     }
 
@@ -33,8 +36,8 @@ public class TaskRepository : ITaskRepository
             EndDate = model.EndDate,
             PreviousTaskUid = model.PreviousTaskId,
             NextTaskUid = model.NextTaskId,
-            Worker = model.Worker,
-            Project = model.Project
+            Worker = model.Worker != null ? await _context.Workers.FindAsync(model.Worker.Id) : null,
+            Project = model.Project != null ? await _context.Projects.FindAsync(model.Project.Id) : null
         };
 
         _context.Task.Add(entity);
@@ -48,6 +51,8 @@ public class TaskRepository : ITaskRepository
     public async Task<IEnumerable<TaskModel>> GetAllForProjectAsync(Project project)
     {
         var tasks = await _context.Task
+            .Include(t => t.Project)
+            .Include(t => t.Worker)
             .Where(t => t.Project == project)
             .ToListAsync();
         return tasks.Select(MapToModel);
@@ -56,7 +61,9 @@ public class TaskRepository : ITaskRepository
     public async Task<IEnumerable<TaskModel>> getTasksByProjectId(int projectId)
     {
         var tasks = await _context.Task
-            .Where(t => t.Project.Id == projectId)
+            .Include(t => t.Project)
+            .Include(t => t.Worker)
+            .Where(t => t.Project!.Id == projectId)
             .ToListAsync();
         return tasks.Select(MapToModel);
     }
@@ -69,7 +76,10 @@ public class TaskRepository : ITaskRepository
 
     public async Task<TaskModel?> GetByIdAsync(int id)
     {
-        var entity = await _context.Task.FirstOrDefaultAsync(t => t.Id == id);
+        var entity = await _context.Task
+            .Include(t => t.Project)
+            .Include(t => t.Worker)
+            .FirstOrDefaultAsync(t => t.Id == id);
         return entity == null ? null : MapToModel(entity);
     }
 
@@ -83,8 +93,8 @@ public class TaskRepository : ITaskRepository
         entity.Duration = task.Duration;
         entity.StartDate = task.StartDate;
         entity.EndDate = task.EndDate;
-        entity.Worker = task.Worker;
-        entity.Project = task.Project;
+        entity.Worker = task.Worker != null ? await _context.Workers.FindAsync(task.Worker.Id) : null;
+        entity.Project = task.Project != null ? await _context.Projects.FindAsync(task.Project.Id) : null;
 
         // update predecessor/successor
         entity.PreviousTaskUid = task.PreviousTaskId;
@@ -117,8 +127,10 @@ public class TaskRepository : ITaskRepository
             Duration = entity.Duration,
             StartDate = entity.StartDate,
             EndDate = entity.EndDate,
-            Worker = entity.Worker,
-            Project = entity.Project,
+            Worker = entity.Worker != null ? new WorkerModel { Id = entity.Worker.Id, Name = entity.Worker.Name } : null,
+            WorkerId = entity.Worker?.Id ?? 0,
+            Project = entity.Project != null ? new ProjectModel { Id = entity.Project.Id, Name = entity.Project.Name } : null,
+            ProjectId = entity.Project?.Id ?? 0,
             PreviousTaskId = entity.PreviousTaskUid,
             NextTaskId = entity.NextTaskUid,
             CreatedAt = entity.CreateDate
@@ -126,15 +138,5 @@ public class TaskRepository : ITaskRepository
     }
 
     // Helper to map model back to entity when needed (not used currently)
-    private static void MapToEntity(TaskModel model, TaskEntity entity)
-    {
-        entity.Description = model.Description;
-        entity.Duration = model.Duration;
-        entity.StartDate = model.StartDate;
-        entity.EndDate = model.EndDate;
-        entity.Worker = model.Worker;
-        entity.Project = model.Project;
-        entity.PreviousTaskUid = model.PreviousTaskId;
-        entity.NextTaskUid = model.NextTaskId;
-    }
+
 }

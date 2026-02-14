@@ -17,7 +17,9 @@ public class ResourceRepository : IResourceRepository
 
     public async Task<IEnumerable<ResourceModel>> GetAllAsync()
     {
-        var resources = await _context.Ressources.ToListAsync();
+        var resources = await _context.Ressources
+            .Include(r => r.Project)
+            .ToListAsync();
         return resources.Select(MapToModel);
     }
 
@@ -27,7 +29,7 @@ public class ResourceRepository : IResourceRepository
         {
             Name = model.Name,
             Count = model.Count,
-            Project = model.Project
+            Project = model.Project != null ? await _context.Projects.FindAsync(model.Project.Id) : null
         };
 
         _context.Ressources.Add(entity);
@@ -45,7 +47,7 @@ public class ResourceRepository : IResourceRepository
         {
             entity.Name = model.Name;
             entity.Count = model.Count;
-            // vllt. noch was für die Projekt zuordnung hinzufügen?
+            entity.Project = model.Project != null ? await _context.Projects.FindAsync(model.Project.Id) : null;
             await _context.SaveChangesAsync();
         }
     }
@@ -64,10 +66,10 @@ public class ResourceRepository : IResourceRepository
 
     public async Task<IEnumerable<ResourceModel>> GetAllForProjectAsync(Project project)
     {
-        var tasks = await _context.Ressources
+        var resources = await _context.Ressources
             .Where(t => t.Project == project)
             .ToListAsync();
-        return tasks.Select(MapToModel);
+        return resources.Select(MapToModel);
     }
 
     private static ResourceModel MapToModel(Ressource entity)
@@ -77,7 +79,7 @@ public class ResourceRepository : IResourceRepository
             Id = entity.Id,
             Name = entity.Name,
             Count = entity.Count,
-            Project = entity.Project,
+            Project = entity.Project != null ? new ProjectModel { Id = entity.Project.Id, Name = entity.Project.Name } : null,
             CreatedAt = entity.CreateDate
         };
     }

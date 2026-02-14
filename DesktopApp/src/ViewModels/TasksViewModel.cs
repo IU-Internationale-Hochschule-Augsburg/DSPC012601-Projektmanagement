@@ -10,30 +10,75 @@ namespace Projektmanagement_DesktopApp.ViewModels;
 public class TasksViewModel : ViewModelBase
 {
     private readonly ITaskRepository _taskRepository;
+    private readonly IProjectRepository _projectRepository;
+    private readonly IWorkerRepository _workerRepository;
     private readonly TaskService _taskService;
+    
     private bool _isAddingNew;
     private TaskModel? _selectedTask;
+    
     private int _newDuration;
     private string _newDescription = string.Empty;
     
-    public TasksViewModel(ITaskRepository taskRepository)
+    public RelayCommand DeleteCommand { get; }
+    
+    // Selection lists
+    private ObservableCollection<ProjectModel> _projects = new();
+    private ObservableCollection<WorkerModel> _workers = new();
+    private ObservableCollection<TaskModel> _potentialPredecessors = new();
+
+    // Selected items for Add/Edit
+    private ProjectModel? _newProject;
+    private WorkerModel? _newWorker;
+    private TaskModel? _newPredecessor;
+
+
+
+    public TasksViewModel(
+        ITaskRepository taskRepository,
+        IProjectRepository projectRepository,
+        IWorkerRepository workerRepository)
     {
         _taskRepository = taskRepository ?? throw new ArgumentNullException(nameof(taskRepository));
+        _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
+        _workerRepository = workerRepository ?? throw new ArgumentNullException(nameof(workerRepository));
+        
         _taskService = new TaskService(taskRepository);
         Tasks = new ObservableCollection<TaskModel>();
         
         AddCommand = new RelayCommand(_ => StartAdding());
+        EditCommand = new RelayCommand(_ => StartEditing());
         SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelCommand = new RelayCommand(_ => CancelAdding());
         SelectCommand = new RelayCommand(t => SelectedTask = t as TaskModel);
         RecalculateTimelineCommand = new RelayCommand(
             async _ => await RecalculateTimelineAsync(),
             _ => SelectedTask != null && SelectedTask.ProjectId > 0);
+            
+        DeleteCommand = new RelayCommand(async _ => await DeleteSelectedTaskAsync(), _ => SelectedTask != null);
         
         _ = LoadAsync();
     }
 
     public ObservableCollection<TaskModel> Tasks { get; }
+
+    public ObservableCollection<ProjectModel> Projects
+    {
+        get => _projects;
+        set => SetProperty(ref _projects, value);
+    }
+
+    public ObservableCollection<WorkerModel> Workers
+    {
+        get => _workers;
+        set => SetProperty(ref _workers, value);
+    }
+
+    public ObservableCollection<TaskModel> PotentialPredecessors
+    {
+        get => _potentialPredecessors;
+        set => SetProperty(ref _potentialPredecessors, value);
+    }
 
     public bool IsAddingNew
     {
@@ -81,7 +126,32 @@ public class TasksViewModel : ViewModelBase
         set => SetProperty(ref _newDescription, value);
     }
 
+    public ProjectModel? NewProject
+    {
+        get => _newProject;
+        set
+        {
+            if (SetProperty(ref _newProject, value))
+            {
+               UpdatePredecessorsList();
+            }
+        }
+    }
+
+    public WorkerModel? NewWorker
+    {
+        get => _newWorker;
+        set => SetProperty(ref _newWorker, value);
+    }
+
+    public TaskModel? NewPredecessor
+    {
+        get => _newPredecessor;
+        set => SetProperty(ref _newPredecessor, value);
+    }
+
     public RelayCommand AddCommand { get; }
+    public RelayCommand EditCommand { get; }
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }
     public RelayCommand SelectCommand { get; }
@@ -91,21 +161,110 @@ public class TasksViewModel : ViewModelBase
     {
         try
         {
-            var data = await _taskRepository.GetAllAsync();
-            Tasks.Clear();
-            foreach (var item in data) Tasks.Add(item);
+            // Load in parallel for performance and isolation
+            var tasksTask = _taskRepository.GetAllAsync();
+            var projectsTask = _projectRepository.GetAllAsync();
+            var workersTask = _workerRepository.GetAllAsync();
+
+            try
+            {
+                var tasks = await tasksTask;
+                Tasks.Clear();
+                foreach (var item in tasks) Tasks.Add(item);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Aufgaben: {ex.Message}");
+            }
+
+            try
+            {
+                var projects = await projectsTask;
+                Projects.Clear();
+                foreach (var p in projects) Projects.Add(p);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Projekte: {ex.Message}");
+            }
+
+            try
+            {
+                var workers = await workersTask;
+                Workers.Clear();
+                foreach (var w in workers) Workers.Add(w);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Bearbeiter: {ex.Message}");
+            }
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Laden: {ex.Message}");
+            MessageBox.Show($"Genereller Ladefehler: {ex.Message}");
         }
     }
 
     private void StartAdding()
     {
+        SelectedTask = null;
         NewDuration = 0;
         NewDescription = string.Empty;
+        NewProject = null;
+        NewWorker = null;
+        NewPredecessor = null;
         IsAddingNew = true;
+        
+        // Ensure data is fresh
+        _ = LoadAsync();
+        UpdatePredecessorsList();
+    }
+
+    private async void StartEditing()
+    {
+        if (SelectedTask == null) return;
+
+        // Ensure we have latest lists before setting selection
+        await LoadAsync();
+
+        NewDuration = SelectedTask.Duration;
+        NewDescription = SelectedTask.Description;
+        
+        // Find matching objects in lists
+        NewProject = Projects.FirstOrDefault(p => p.Id == SelectedTask.ProjectId);
+        NewWorker = Workers.FirstOrDefault(w => w.Id == SelectedTask.WorkerId);
+
+        // Ensure IDs are synced if they were 0 but objects existed
+        if (NewProject != null) SelectedTask.ProjectId = NewProject.Id;
+        if (NewWorker != null) SelectedTask.WorkerId = NewWorker.Id;
+        
+        // Update predecessors based on project
+        UpdatePredecessorsList();
+        
+        NewPredecessor = PotentialPredecessors.FirstOrDefault(t => t.Id == SelectedTask.PreviousTaskId);
+
+        // Header aktualisieren
+        OnPropertyChanged(nameof(HeaderText));
+        
+        IsAddingNew = true;
+    }
+
+    private void UpdatePredecessorsList()
+    {
+        PotentialPredecessors.Clear();
+        
+        if (NewProject == null) return;
+
+        // Add all tasks that belong to the selected project
+        // Exclude the task currently being edited (if any) to avoid self-reference cycles (basic check)
+        var filteredTasks = Tasks.Where(t => 
+            (t.ProjectId == NewProject.Id || (t.Project != null && t.Project.Id == NewProject.Id)) && 
+            (SelectedTask == null || t.Id != SelectedTask.Id));
+            
+        foreach (var task in filteredTasks)
+        {
+            PotentialPredecessors.Add(task);
+        }
     }
 
     private bool CanSave() => NewDuration > 0;
@@ -114,15 +273,49 @@ public class TasksViewModel : ViewModelBase
     {
         try
         {
-            var model = new TaskModel
+            if (SelectedTask != null)
             {
-                Duration = NewDuration,
-                Description = NewDescription.Trim()
-            };
-            var saved = await _taskRepository.AddAsync(model);
-            Tasks.Add(saved);
+                // Update
+                SelectedTask.Duration = NewDuration;
+                SelectedTask.Description = NewDescription.Trim();
+                SelectedTask.Project = NewProject;
+                SelectedTask.ProjectId = NewProject?.Id ?? 0;
+                SelectedTask.Worker = NewWorker;
+                SelectedTask.WorkerId = NewWorker?.Id ?? 0;
+                SelectedTask.PreviousTaskId = NewPredecessor?.Id;
+                
+                // If the predecessor changed, we might want to clear NextTaskId on the *old* predecessor 
+                // and set it on the *new* predecessor? 
+                // For now, simpler approach: The Repository Update should handle FKs. 
+                // The CPM calculation service will re-derive links later anyway or the UI 
+                // might need to force a recalc upon assignment.
+                // Let's rely on standard saving.
+                
+                await _taskRepository.UpdateAsync(SelectedTask);
+                
+                // Refresh list or at least re-bind (perform call for side effects if any)
+                await _taskRepository.GetByIdAsync(SelectedTask.Id);
+                // (Optional: update the object in ObservableCollection if needed)
+            }
+            else
+            {
+                // Create
+                var model = new TaskModel
+                {
+                    Duration = NewDuration,
+                    Description = NewDescription.Trim(),
+                    Project = NewProject,
+                    ProjectId = NewProject?.Id ?? 0,
+                    Worker = NewWorker,
+                    WorkerId = NewWorker?.Id ?? 0,
+                    PreviousTaskId = NewPredecessor?.Id
+                };
+                var saved = await _taskRepository.AddAsync(model);
+                Tasks.Add(saved);
+                SelectedTask = saved;
+            }
+            OnPropertyChanged(nameof(SelectedTask));
             IsAddingNew = false;
-            SelectedTask = saved;
         }
         catch (InvalidOperationException ex)
         {

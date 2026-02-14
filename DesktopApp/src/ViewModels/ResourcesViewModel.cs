@@ -8,27 +8,44 @@ namespace Projektmanagement_DesktopApp.ViewModels;
 public class ResourcesViewModel : ViewModelBase
 {
     private readonly IResourceRepository _resourceRepository;
+    private readonly IProjectRepository _projectRepository;
     private bool _isAddingNew;
     private ResourceModel? _selectedResource;
     private string _newName = string.Empty;
     private int _newCount;
+    private ObservableCollection<ProjectModel> _projects = new();
+    private ProjectModel? _selectedProject;
+
     public RelayCommand EditCommand { get; }
-    
-    public ResourcesViewModel(IResourceRepository resourceRepository)
+
+    public ResourcesViewModel(IResourceRepository resourceRepository, IProjectRepository projectRepository)
     {
         _resourceRepository = resourceRepository ?? throw new ArgumentNullException(nameof(resourceRepository));
+        _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         Resources = new ObservableCollection<ResourceModel>();
 
         AddCommand = new RelayCommand(_ => StartAdding());
         SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelCommand = new RelayCommand(_ => CancelAdding());
         SelectCommand = new RelayCommand(r => SelectedResource = r as ResourceModel);
-        
-        EditCommand = new RelayCommand(_ => StartEditing());        
+
+        EditCommand = new RelayCommand(_ => StartEditing());
         _ = LoadAsync();
     }
 
     public ObservableCollection<ResourceModel> Resources { get; }
+
+    public ObservableCollection<ProjectModel> Projects
+    {
+        get => _projects;
+        set => SetProperty(ref _projects, value);
+    }
+
+    public ProjectModel? NewProject
+    {
+        get => _selectedProject;
+        set => SetProperty(ref _selectedProject, value);
+    }
 
     public bool IsAddingNew
     {
@@ -79,13 +96,34 @@ public class ResourcesViewModel : ViewModelBase
     {
         try
         {
-            var data = await _resourceRepository.GetAllAsync();
-            Resources.Clear();
-            foreach (var item in data) Resources.Add(item);
+            var resourcesTask = _resourceRepository.GetAllAsync();
+            var projectsTask = _projectRepository.GetAllAsync();
+
+            try
+            {
+                var resources = await resourcesTask;
+                Resources.Clear();
+                foreach (var r in resources) Resources.Add(r);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Ressourcen: {ex.Message}");
+            }
+
+            try
+            {
+                var projects = await projectsTask;
+                Projects.Clear();
+                foreach (var p in projects) Projects.Add(p);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Laden der Projekte: {ex.Message}");
+            }
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Laden: {ex.Message}");
+            MessageBox.Show($"Genereller Ladefehler (Ressourcen): {ex.Message}");
         }
     }
 
@@ -94,18 +132,28 @@ public class ResourcesViewModel : ViewModelBase
         SelectedResource = null;
         NewName = string.Empty;
         NewCount = 0;
+        NewProject = null;
         IsAddingNew = true;
+
+        // Ensure fresh project list
+        _ = LoadAsync();
     }
-    
-    private void StartEditing()
+
+    private async void StartEditing()
     {
         if (SelectedResource == null) return;
 
-        NewName = SelectedResource.Name; 
+        // Ensure fresh project list
+        await LoadAsync();
+
+        NewName = SelectedResource.Name;
         NewCount = SelectedResource.Count;
 
-        IsAddingNew = true; 
-    
+        // Find the matching project in our loaded list to ensure equality check works for ComboBox
+        NewProject = Projects.FirstOrDefault(p => p.Id == SelectedResource.Project?.Id);
+
+        IsAddingNew = true;
+
         // Header aktualisieren
         OnPropertyChanged(nameof(HeaderText));
     }
@@ -121,15 +169,22 @@ public class ResourcesViewModel : ViewModelBase
                 // Update-Modus
                 SelectedResource.Name = NewName.Trim();
                 SelectedResource.Count = NewCount;
+                SelectedResource.Project = NewProject;
                 await _resourceRepository.UpdateAsync(SelectedResource);
             }
             else
             {
                 // Add-Modus
-                var model = new ResourceModel { Name = NewName.Trim(), Count = NewCount };
+                var model = new ResourceModel
+                {
+                    Name = NewName.Trim(),
+                    Count = NewCount,
+                    Project = NewProject
+                };
                 var saved = await _resourceRepository.AddAsync(model);
                 Resources.Add(saved);
             }
+
             IsAddingNew = false;
         }
         catch (InvalidOperationException ex)
@@ -156,4 +211,5 @@ public class ResourcesViewModel : ViewModelBase
             }
         }
     }
+
 }

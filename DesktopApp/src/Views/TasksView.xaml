@@ -36,7 +36,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding HeaderText}" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#1976D2"/>
+                        <TextBlock Grid.Column="0" Text="{Binding HeaderText}" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#1976D2" TextTrimming="CharacterEllipsis"/>
                         <Button Grid.Column="1" Command="{Binding AddCommand}" Width="36" Height="36" Background="#1976D2" BorderThickness="0" Cursor="Hand">
                             <Button.Style>
                                 <Style TargetType="Button">
@@ -87,17 +87,34 @@
                     </ScrollViewer>
 
                     <!-- Neues Aufgabe Eingabeformular -->
-                    <StackPanel Grid.Row="1" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}">
+                    <ScrollViewer Grid.Row="1" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
                         <TextBlock Text="Beschreibung" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
                         <TextBox Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged}"
                                  Padding="8" FontSize="14" Height="80" TextWrapping="Wrap" AcceptsReturn="True"
                                  VerticalScrollBarVisibility="Auto" BorderBrush="#BDBDBD" BorderThickness="1"
                                  Margin="0,0,0,15"/>
-
+    
                         <TextBlock Text="Dauer (Stunden) *" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
                         <TextBox Text="{Binding NewDuration, UpdateSourceTrigger=PropertyChanged}" Padding="8" FontSize="14"
                                  BorderBrush="#BDBDBD" BorderThickness="1" Margin="0,0,0,15"/>
+    
+                        <TextBlock Text="Projekt" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding NewProject}"
+                                  DisplayMemberPath="Name" Padding="8" FontSize="14"
+                                  BorderBrush="#BDBDBD" BorderThickness="1" Margin="0,0,0,15" Background="White"/>
+    
+                        <TextBlock Text="Bearbeiter" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding Workers}" SelectedItem="{Binding NewWorker}"
+                                  DisplayMemberPath="Name" Padding="8" FontSize="14"
+                                  BorderBrush="#BDBDBD" BorderThickness="1" Margin="0,0,0,15" Background="White"/>
+    
+                        <TextBlock Text="Vorgänger-Aufgabe" FontSize="14" Foreground="#424242" Margin="0,0,0,5"/>
+                        <ComboBox ItemsSource="{Binding PotentialPredecessors}" SelectedItem="{Binding NewPredecessor}"
+                                  DisplayMemberPath="DisplayName" Padding="8" FontSize="14"
+                                  BorderBrush="#BDBDBD" BorderThickness="1" Margin="0,0,0,30" Background="White"/>
                     </StackPanel>
+                </ScrollViewer>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0" Visibility="{Binding IsAddingNew, Converter={StaticResource BoolToVisibility}}">
                         <Button Content="Abbrechen" Command="{Binding CancelCommand}" Width="100" Height="36" Margin="0,0,10,0"/>
@@ -122,73 +139,80 @@
                             </Style>
                         </StackPanel.Style>
 
-                        <Grid Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />      
-                                <ColumnDefinition Width="Auto" />   
-                                <ColumnDefinition Width="Auto" />   
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Grid.Column="0" 
-                                       Text="Details" 
-                                       FontSize="24" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#1976D2" 
-                                       VerticalAlignment="Center"/>
-
-                            <Button Grid.Column="1" 
-                                    Width="40" Height="40" 
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Details" FontSize="24" FontWeight="SemiBold" Foreground="#1976D2" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Width="40" Height="40" 
                                     Command="{Binding EditCommand}"
                                     Style="{StaticResource MaterialDesignIconButton}" 
                                     ToolTip="Vorgang bearbeiten">
                                 <materialDesign:PackIcon Kind="Pencil" />
                             </Button>
 
-                            <Button Grid.Column="2" 
-                                    Width="40" Height="40" 
+                            <Button Width="40" Height="40" 
                                     Style="{StaticResource MaterialDesignIconButton}" 
                                     ToolTip="Vorgang löschen" 
-                                    Click="DeleteButton_Click">
+                                    Click="DeleteButton_Click"
+                                    Margin="5,0,0,0">
                                 <materialDesign:PackIcon Kind="Delete"/>
                             </Button>
-                        </Grid>
-                        <!-- Detail-Grid -->
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        </StackPanel>
+                    </Grid>
+                    
+                    <!-- Detail-Grid -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Aufgabe:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedTask.DisplayName}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Aufgabe:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedTask.DisplayName}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Beschreibung:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedTask.Description}" FontSize="14" Foreground="#212121" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Projekt:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedTask.Project.Name}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Start:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedTask.StartDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Bearbeiter:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedTask.Worker.Name}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ende:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedTask.EndDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Beschreibung:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedTask.Description}" FontSize="14" Foreground="#212121" TextWrapping="Wrap" Margin="0,0,0,10"/>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Dauer:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedTask.Duration, StringFormat='{}{0} Stunden'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
-                        </Grid>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Start:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedTask.StartDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
 
-                        <!-- Timeline aktualisieren Button -->
-                        <Button Content="📅 Timeline aktualisieren"
-                                Command="{Binding RecalculateTimelineCommand}"
-                                Height="40" Margin="0,25,0,0"
-                                HorizontalAlignment="Stretch"
-                                Background="#1976D2" Foreground="White" FontSize="14" FontWeight="Medium"
-                                BorderThickness="0" Cursor="Hand">
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Ende:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedTask.EndDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Dauer:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedTask.Duration, StringFormat='{}{0} Stunden'}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+                        
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Vorgänger-ID:" FontSize="14" FontWeight="SemiBold" Foreground="#424242" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding SelectedTask.PreviousTaskId}" FontSize="14" Foreground="#212121" Margin="0,0,0,10"/>
+                    </Grid>
+
+                    <!-- Timeline aktualisieren Button -->
+                    <Button Content="📅 Timeline aktualisieren"
+                            Command="{Binding RecalculateTimelineCommand}"
+                            Height="40" Margin="0,25,0,0"
+                            HorizontalAlignment="Stretch"
+                            Background="#1976D2" Foreground="White" FontSize="14" FontWeight="Medium"
+                            BorderThickness="0" Cursor="Hand">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Template">
