@@ -314,7 +314,7 @@ public class TasksViewModel : ViewModelBase
                 Tasks.Add(saved);
                 SelectedTask = saved;
             }
-            
+            OnPropertyChanged(nameof(SelectedTask));
             IsAddingNew = false;
         }
         catch (InvalidOperationException ex)
