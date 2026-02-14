@@ -31,8 +31,8 @@ public class WorkerRepository : IWorkerRepository
         _context.Workers.Add(entity);
         await _context.SaveChangesAsync();
 
-        model.Id = entity.id;
-        model.CreatedAt = entity.createDate;
+        model.Id = entity.Id;
+        model.CreatedAt = entity.CreateDate;
         return model;
     }
 
@@ -40,9 +40,9 @@ public class WorkerRepository : IWorkerRepository
     {
         return new WorkerModel
         {
-            Id = entity.id,
+            Id = entity.Id,
             Name = entity.name,
-            CreatedAt = entity.createDate
+            CreatedAt = entity.CreateDate
         };
     }
     
@@ -59,7 +59,7 @@ public class WorkerRepository : IWorkerRepository
     public async Task DeleteAsync(int id)
     {
         var deleted = await _context.Workers
-            .Where(w => w.id == id)
+            .Where(w => w.Id == id)
             .ExecuteDeleteAsync();
 
         if (deleted == 0)

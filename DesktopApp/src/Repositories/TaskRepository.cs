@@ -39,8 +39,8 @@ public class TaskRepository : ITaskRepository
         _context.Task.Add(entity);
         await _context.SaveChangesAsync();
 
-        model.Id = entity.id;
-        model.CreatedAt = entity.createDate;
+        model.Id = entity.Id;
+        model.CreatedAt = entity.CreateDate;
         return model;
     }
 
@@ -55,7 +55,7 @@ public class TaskRepository : ITaskRepository
     public async Task<IEnumerable<TaskModel>> getTasksByProjectId(int projectId)
     {
         var tasks = await _context.Task
-            .Where(t => t.project.id == projectId)
+            .Where(t => t.project.Id == projectId)
             .ToListAsync();
         return tasks.Select(MapToModel);
     }
@@ -68,13 +68,13 @@ public class TaskRepository : ITaskRepository
 
     public async Task<TaskModel?> GetByIdAsync(int id)
     {
-        var entity = await _context.Task.FirstOrDefaultAsync(t => t.id == id);
+        var entity = await _context.Task.FirstOrDefaultAsync(t => t.Id == id);
         return entity == null ? null : MapToModel(entity);
     }
 
     public async Task<TaskModel> UpdateAsync(TaskModel task)
     {
-        var entity = await _context.Task.FirstOrDefaultAsync(t => t.id == task.Id);
+        var entity = await _context.Task.FirstOrDefaultAsync(t => t.Id == task.Id);
         if (entity == null) throw new InvalidOperationException($"Task with id {task.Id} not found");
 
         // Update fields
@@ -99,7 +99,7 @@ public class TaskRepository : ITaskRepository
     {
         return new TaskModel
         {
-            Id = entity.id,
+            Id = entity.Id,
             Description = entity.description,
             Duration = entity.duration,
             StartDate = entity.startDate,
@@ -108,7 +108,7 @@ public class TaskRepository : ITaskRepository
             Project = entity.project,
             PreviousTaskId = entity.previousTaskUid,
             NextTaskId = entity.nextTaskUid,
-            CreatedAt = entity.createDate
+            CreatedAt = entity.CreateDate
         };
     }
 

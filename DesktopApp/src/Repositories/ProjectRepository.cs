@@ -32,8 +32,8 @@ public class ProjectRepository : IProjectRepository
         _context.Projects.Add(entity);
         await _context.SaveChangesAsync();
 
-        model.Id = entity.id;
-        model.CreatedAt = entity.createDate;
+        model.Id = entity.Id;
+        model.CreatedAt = entity.CreateDate;
         return model;
     }
 
@@ -51,7 +51,7 @@ public class ProjectRepository : IProjectRepository
     public async Task DeleteAsync(int id)
     {
         var deleted = await _context.Projects
-            .Where(p => p.id == id)
+            .Where(p => p.Id == id)
             .ExecuteDeleteAsync();
 
         if (deleted == 0)
@@ -62,7 +62,7 @@ public class ProjectRepository : IProjectRepository
 
     public async Task<Project> GetByIdAsync(int id)
     {
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.id == id);
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == id);
         if (project == null)
         {
             throw new KeyNotFoundException($"Project with id {id} not found.");
@@ -74,10 +74,10 @@ public class ProjectRepository : IProjectRepository
     {
         return new ProjectModel
         {
-            Id = entity.id,
+            Id = entity.Id,
             Name = entity.Name,
             Description = entity.Description,
-            CreatedAt = entity.createDate
+            CreatedAt = entity.CreateDate
         };
     }
 }

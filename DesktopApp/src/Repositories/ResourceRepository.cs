@@ -33,8 +33,8 @@ public class ResourceRepository : IResourceRepository
         _context.Ressources.Add(entity);
         await _context.SaveChangesAsync();
 
-        model.Id = entity.id;
-        model.CreatedAt = entity.createDate;
+        model.Id = entity.Id;
+        model.CreatedAt = entity.CreateDate;
         return model;
     }
     
@@ -53,7 +53,7 @@ public class ResourceRepository : IResourceRepository
     public async Task DeleteAsync(int id)
     {
         var deleted = await _context.Ressources
-            .Where(p => p.id == id)
+            .Where(p => p.Id == id)
             .ExecuteDeleteAsync();
 
         if (deleted == 0)
@@ -74,11 +74,11 @@ public class ResourceRepository : IResourceRepository
     {
         return new ResourceModel
         {
-            Id = entity.id,
+            Id = entity.Id,
             Name = entity.name,
             Count = entity.count,
             Project = entity.project,
-            CreatedAt = entity.createDate
+            CreatedAt = entity.CreateDate
         };
     }
 }
