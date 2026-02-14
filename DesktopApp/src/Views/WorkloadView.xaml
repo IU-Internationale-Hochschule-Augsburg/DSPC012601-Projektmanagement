@@ -1,0 +1,72 @@
+<UserControl x:Class="Projektmanagement_DesktopApp.Views.WorkloadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:Projektmanagement_DesktopApp.Views"
+             xmlns:converters="clr-namespace:Projektmanagement_DesktopApp.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:LoadColorConverter x:Key="LoadColorConverter"/>
+    </UserControl.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Mitarbeiter-Auslastung" FontSize="28" FontWeight="Bold" Foreground="#1976D2" Margin="0,0,0,20"/>
+
+        <!-- Filter Area -->
+        <materialDesign:Card Grid.Row="1" Padding="15" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <DatePicker materialDesign:HintAssist.Hint="Startdatum" 
+                            SelectedDate="{Binding StartDate}" 
+                            Width="150" Margin="0,0,15,0"/>
+                
+                <DatePicker materialDesign:HintAssist.Hint="Enddatum" 
+                            SelectedDate="{Binding EndDate}" 
+                            Width="150" Margin="0,0,20,0"/>
+
+                <Button Content="Aktualisieren" 
+                        Command="{Binding CalculateCommand}" 
+                        Style="{StaticResource MaterialDesignRaisedButton}"/>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!-- Stats List -->
+        <materialDesign:Card Grid.Row="2" materialDesign:ElevationAssist.Elevation="Dp2">
+            <DataGrid ItemsSource="{Binding WorkloadStats}" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      Background="White">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Mitarbeiter" Binding="{Binding WorkerName}" Width="*" FontWeight="SemiBold"/>
+                    <DataGridTextColumn Header="Anzahl Aufgaben" Binding="{Binding TaskCount}" Width="150"/>
+                    <DataGridTextColumn Header="Gesamtstunden" Binding="{Binding TotalHours}" Width="150"/>
+                    
+                    <DataGridTemplateColumn Header="Auslastung (Status)" Width="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ProgressBar Value="{Binding LoadPercentage, Mode=OneWay}" 
+                                                 Width="100" Height="10" 
+                                                 Margin="0,0,10,0"
+                                                 Foreground="{Binding TotalHours, Converter={StaticResource LoadColorConverter}}"/>
+                                    <TextBlock Text="{Binding LoadStatus}" 
+                                               FontSize="12"
+                                               Foreground="{Binding TotalHours, Converter={StaticResource LoadColorConverter}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

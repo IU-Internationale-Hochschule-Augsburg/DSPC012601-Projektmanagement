@@ -26,8 +26,9 @@ public partial class MainWindow : Window
         var resourcesVm = new ResourcesViewModel(resourceRepo, projectRepo);
         var tasksVm = new TasksViewModel(taskRepo, projectRepo, workerRepo);
         var workersVm = new WorkersViewModel(workerRepo);
+        var workloadVm = new WorkloadViewModel(taskRepo);
 
         // Set DataContext
-        DataContext = new MainViewModel(projectsVm, resourcesVm, tasksVm, workersVm);
+        DataContext = new MainViewModel(projectsVm, resourcesVm, tasksVm, workersVm, workloadVm);
     }
 }

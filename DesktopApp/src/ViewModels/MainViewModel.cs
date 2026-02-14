@@ -7,17 +7,20 @@ public class MainViewModel : ViewModelBase
     private readonly ResourcesViewModel _resourcesViewModel;
     private readonly TasksViewModel _tasksViewModel;
     private readonly WorkersViewModel _workersViewModel;
+    private readonly WorkloadViewModel _workloadViewModel;
 
     public MainViewModel(
         ProjectsViewModel projectsViewModel,
         ResourcesViewModel resourcesViewModel,
         TasksViewModel tasksViewModel,
-        WorkersViewModel workersViewModel)
+        WorkersViewModel workersViewModel,
+        WorkloadViewModel workloadViewModel)
     {
         _projectsViewModel = projectsViewModel;
         _resourcesViewModel = resourcesViewModel;
         _tasksViewModel = tasksViewModel;
         _workersViewModel = workersViewModel;
+        _workloadViewModel = workloadViewModel;
 
         _currentViewModel = _projectsViewModel;
 
@@ -40,6 +43,7 @@ public class MainViewModel : ViewModelBase
             "Resources" => _resourcesViewModel,
             "Tasks" => _tasksViewModel,
             "Workers" => _workersViewModel,
+            "Workload" => _workloadViewModel,
             _ => _projectsViewModel
         };
         OnPropertyChanged(nameof(CurrentViewName));
@@ -51,6 +55,7 @@ public class MainViewModel : ViewModelBase
         ResourcesViewModel => "Resources",
         TasksViewModel => "Tasks",
         WorkersViewModel => "Workers",
+        WorkloadViewModel => "Workload",
         _ => "Projects"
     };
 }

@@ -25,6 +25,9 @@
         <DataTemplate DataType="{x:Type vm:WorkersViewModel}">
             <views:WorkersView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:WorkloadViewModel}">
+            <views:WorkloadView />
+        </DataTemplate>
 
         <Style x:Key="NavButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
             <Setter Property="Foreground" Value="White" />
@@ -62,6 +65,11 @@
                         Tag="Workers"
                         Command="{Binding NavigateCommand}" 
                         CommandParameter="Workers" />
+                <Button Content="Auslastung" 
+                        Style="{StaticResource NavButtonStyle}" 
+                        Tag="Workload"
+                        Command="{Binding NavigateCommand}" 
+                        CommandParameter="Workload" />
             </StackPanel>
         </Border>
 
