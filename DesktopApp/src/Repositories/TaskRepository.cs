@@ -27,8 +27,8 @@ public class TaskRepository : ITaskRepository
             duration = model.Duration,
             startDate = model.StartDate,
             endDate = model.EndDate,
-            workerUid = model.WorkerId,
-            projectUid = model.ProjectId
+            worker = model.Worker,
+            project = model.Project
         };
 
         _context.Task.Add(entity);
@@ -47,8 +47,8 @@ public class TaskRepository : ITaskRepository
             Duration = entity.duration,
             StartDate = entity.startDate,
             EndDate = entity.endDate,
-            WorkerId = entity.workerUid,
-            ProjectId = entity.projectUid,
+            Worker = entity.worker,
+            Project = entity.project,
             CreatedAt = entity.createDate
         };
     }

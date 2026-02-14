@@ -8,6 +8,6 @@ public class Task : DataClass
 
     public DateTime endDate { get; set; }
 
-    public int workerUid { get; set; }
-    public int projectUid { get; set; }
+    public Worker? worker { get; set; }
+    public Project? project { get; set; }
 }

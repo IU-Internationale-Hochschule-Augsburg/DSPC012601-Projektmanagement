@@ -27,7 +27,7 @@ public class ResourceRepository : IResourceRepository
         {
             name = model.Name,
             count = model.Count,
-            projectUid = model.ProjectId
+            project = model.Project
         };
 
         _context.Ressources.Add(entity);
@@ -69,7 +69,7 @@ public class ResourceRepository : IResourceRepository
             Id = entity.id,
             Name = entity.name,
             Count = entity.count,
-            ProjectId = entity.projectUid,
+            Project = entity.project,
             CreatedAt = entity.createDate
         };
     }
