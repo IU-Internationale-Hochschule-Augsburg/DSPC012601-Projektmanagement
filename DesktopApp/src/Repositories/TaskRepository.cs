@@ -99,7 +99,7 @@ public class TaskRepository : ITaskRepository
     public async Task DeleteAsync(int id)
     {
         var deleted = await _context.Task
-            .Where(t => t.id == id)
+            .Where(t => t.Id == id)
             .ExecuteDeleteAsync();
 
         if (deleted == 0)
