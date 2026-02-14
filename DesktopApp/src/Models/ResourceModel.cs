@@ -27,6 +27,6 @@ public class ResourceModel : ViewModelBase
         set => SetProperty(ref _count, value); 
     }
     
-    public Project? Project { get; set; }
+    public ProjectModel? Project { get; set; }
     public DateTime CreatedAt { get; set; }
 }

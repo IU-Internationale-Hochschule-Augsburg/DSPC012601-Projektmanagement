@@ -2,15 +2,15 @@
 
 public class TaskRevision : DataClass
 {
-    public int taskUid { get; set; }
+    public int TaskUid { get; set; }
 
-    public int originalUid { get; set; }
+    public int OriginalUid { get; set; }
     
-    public int previousTaskUid { get; set; }
+    public int PreviousTaskUid { get; set; }
 
     // Optional: Revisionsnummer
-    public int revisionNumber { get; set; }
+    public int RevisionNumber { get; set; }
 
     // Optional: Zeitstempel der Revision
-    public DateTime revisionDate { get; set; } = DateTime.UtcNow;
+    public DateTime RevisionDate { get; set; } = DateTime.UtcNow;
 }

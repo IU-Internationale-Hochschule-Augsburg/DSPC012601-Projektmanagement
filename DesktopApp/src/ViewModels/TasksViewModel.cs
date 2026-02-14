@@ -10,19 +10,42 @@ namespace Projektmanagement_DesktopApp.ViewModels;
 public class TasksViewModel : ViewModelBase
 {
     private readonly ITaskRepository _taskRepository;
+    private readonly IProjectRepository _projectRepository;
+    private readonly IWorkerRepository _workerRepository;
     private readonly TaskService _taskService;
+    
     private bool _isAddingNew;
     private TaskModel? _selectedTask;
+    
     private int _newDuration;
     private string _newDescription = string.Empty;
+    
+    // Selection lists
+    private ObservableCollection<ProjectModel> _projects = new();
+    private ObservableCollection<WorkerModel> _workers = new();
+    private ObservableCollection<TaskModel> _potentialPredecessors = new();
 
-    public TasksViewModel(ITaskRepository taskRepository)
+    // Selected items for Add/Edit
+    private ProjectModel? _newProject;
+    private WorkerModel? _newWorker;
+    private TaskModel? _newPredecessor;
+
+
+
+    public TasksViewModel(
+        ITaskRepository taskRepository,
+        IProjectRepository projectRepository,
+        IWorkerRepository workerRepository)
     {
         _taskRepository = taskRepository ?? throw new ArgumentNullException(nameof(taskRepository));
+        _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
+        _workerRepository = workerRepository ?? throw new ArgumentNullException(nameof(workerRepository));
+        
         _taskService = new TaskService(taskRepository);
         Tasks = new ObservableCollection<TaskModel>();
         
         AddCommand = new RelayCommand(_ => StartAdding());
+        EditCommand = new RelayCommand(_ => StartEditing());
         SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
         CancelCommand = new RelayCommand(_ => CancelAdding());
         SelectCommand = new RelayCommand(t => SelectedTask = t as TaskModel);
@@ -34,6 +57,24 @@ public class TasksViewModel : ViewModelBase
     }
 
     public ObservableCollection<TaskModel> Tasks { get; }
+
+    public ObservableCollection<ProjectModel> Projects
+    {
+        get => _projects;
+        set => SetProperty(ref _projects, value);
+    }
+
+    public ObservableCollection<WorkerModel> Workers
+    {
+        get => _workers;
+        set => SetProperty(ref _workers, value);
+    }
+
+    public ObservableCollection<TaskModel> PotentialPredecessors
+    {
+        get => _potentialPredecessors;
+        set => SetProperty(ref _potentialPredecessors, value);
+    }
 
     public bool IsAddingNew
     {
@@ -81,7 +122,32 @@ public class TasksViewModel : ViewModelBase
         set => SetProperty(ref _newDescription, value);
     }
 
+    public ProjectModel? NewProject
+    {
+        get => _newProject;
+        set
+        {
+            if (SetProperty(ref _newProject, value))
+            {
+               UpdatePredecessorsList();
+            }
+        }
+    }
+
+    public WorkerModel? NewWorker
+    {
+        get => _newWorker;
+        set => SetProperty(ref _newWorker, value);
+    }
+
+    public TaskModel? NewPredecessor
+    {
+        get => _newPredecessor;
+        set => SetProperty(ref _newPredecessor, value);
+    }
+
     public RelayCommand AddCommand { get; }
+    public RelayCommand EditCommand { get; }
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }
     public RelayCommand SelectCommand { get; }
@@ -94,6 +160,14 @@ public class TasksViewModel : ViewModelBase
             var data = await _taskRepository.GetAllAsync();
             Tasks.Clear();
             foreach (var item in data) Tasks.Add(item);
+
+            var pData = await _projectRepository.GetAllAsync();
+            Projects.Clear();
+            foreach (var p in pData) Projects.Add(p);
+
+            var wData = await _workerRepository.GetAllAsync();
+            Workers.Clear();
+            foreach (var w in wData) Workers.Add(w);
         }
         catch (InvalidOperationException ex)
         {
@@ -103,9 +177,52 @@ public class TasksViewModel : ViewModelBase
 
     private void StartAdding()
     {
+        SelectedTask = null;
         NewDuration = 0;
         NewDescription = string.Empty;
+        NewProject = null;
+        NewWorker = null;
+        NewPredecessor = null;
         IsAddingNew = true;
+        
+        UpdatePredecessorsList();
+    }
+
+    private void StartEditing()
+    {
+        if (SelectedTask == null) return;
+
+        NewDuration = SelectedTask.Duration;
+        NewDescription = SelectedTask.Description;
+        
+        // Find matching objects in lists
+        NewProject = Projects.FirstOrDefault(p => p.Id == SelectedTask.ProjectId);
+        NewWorker = Workers.FirstOrDefault(w => w.Id == SelectedTask.WorkerId);
+        
+        // Update predecessors based on project
+        UpdatePredecessorsList();
+        
+        NewPredecessor = PotentialPredecessors.FirstOrDefault(t => t.Id == SelectedTask.PreviousTaskId);
+
+        // Header aktualisieren
+        OnPropertyChanged(nameof(HeaderText));
+        
+        IsAddingNew = true;
+    }
+
+    private void UpdatePredecessorsList()
+    {
+        PotentialPredecessors.Clear();
+        
+        if (NewProject == null) return;
+
+        // Add all tasks that belong to the selected project
+        // Exclude the task currently being edited (if any) to avoid self-reference cycles (basic check)
+        foreach (var task in Tasks.Where(t => t.ProjectId == NewProject.Id))
+        {
+            if (SelectedTask != null && task.Id == SelectedTask.Id) continue;
+            PotentialPredecessors.Add(task);
+        }
     }
 
     private bool CanSave() => NewDuration > 0;
@@ -114,15 +231,45 @@ public class TasksViewModel : ViewModelBase
     {
         try
         {
-            var model = new TaskModel
+            if (SelectedTask != null)
             {
-                Duration = NewDuration,
-                Description = NewDescription.Trim()
-            };
-            var saved = await _taskRepository.AddAsync(model);
-            Tasks.Add(saved);
+                // Update
+                SelectedTask.Duration = NewDuration;
+                SelectedTask.Description = NewDescription.Trim();
+                SelectedTask.Project = NewProject;
+                SelectedTask.Worker = NewWorker;
+                SelectedTask.PreviousTaskId = NewPredecessor?.Id;
+                
+                // If the predecessor changed, we might want to clear NextTaskId on the *old* predecessor 
+                // and set it on the *new* predecessor? 
+                // For now, simpler approach: The Repository Update should handle FKs. 
+                // The CPM calculation service will re-derive links later anyway or the UI 
+                // might need to force a recalc upon assignment.
+                // Let's rely on standard saving.
+                
+                await _taskRepository.UpdateAsync(SelectedTask);
+                
+                // Refresh list or at least re-bind
+                var updated = await _taskRepository.GetByIdAsync(SelectedTask.Id);
+                // (Optional: update the object in ObservableCollection if needed)
+            }
+            else
+            {
+                // Create
+                var model = new TaskModel
+                {
+                    Duration = NewDuration,
+                    Description = NewDescription.Trim(),
+                    Project = NewProject,
+                    Worker = NewWorker,
+                    PreviousTaskId = NewPredecessor?.Id
+                };
+                var saved = await _taskRepository.AddAsync(model);
+                Tasks.Add(saved);
+                SelectedTask = saved;
+            }
+            
             IsAddingNew = false;
-            SelectedTask = saved;
         }
         catch (InvalidOperationException ex)
         {

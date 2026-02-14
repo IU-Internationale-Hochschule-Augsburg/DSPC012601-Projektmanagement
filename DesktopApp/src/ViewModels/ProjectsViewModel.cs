@@ -16,8 +16,8 @@ public class ProjectsViewModel : ViewModelBase
     private ProjectModel? _selectedProject;
     private string _newProjectName = string.Empty;
     private string _newProjectDescription = string.Empty;
-    private ObservableCollection<TaskModel> _selectedProjectTasks;
-    private ObservableCollection<ResourceModel> _selectedProjectResources;
+    private ObservableCollection<TaskModel> _selectedProjectTasks = new();
+    private ObservableCollection<ResourceModel> _selectedProjectResources = new();
     public RelayCommand EditProjectCommand { get; }
     public RelayCommand CancelAddEditProjectCommand { get; }
 
@@ -83,8 +83,8 @@ public class ProjectsViewModel : ViewModelBase
             SetProperty(ref _selectedProject, value);
             if (SelectedProject is not null)
             {
-                LoadTasksAsync();
-                LoadResourcesAsync();
+                _ = LoadTasksAsync();
+                _ = LoadResourcesAsync();
             }
         }
     }
