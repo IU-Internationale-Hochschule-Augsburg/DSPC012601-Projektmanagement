@@ -25,7 +25,7 @@ public class WorkerRepository : IWorkerRepository
     {
         var entity = new Worker
         {
-            name = model.Name
+            Name = model.Name
         };
 
         _context.Workers.Add(entity);
@@ -41,7 +41,7 @@ public class WorkerRepository : IWorkerRepository
         return new WorkerModel
         {
             Id = entity.Id,
-            Name = entity.name,
+            Name = entity.Name,
             CreatedAt = entity.CreateDate
         };
     }
@@ -51,7 +51,7 @@ public class WorkerRepository : IWorkerRepository
         var entity = await _context.Workers.FindAsync(model.Id);
         if (entity != null)
         {
-            entity.name = model.Name;
+            entity.Name = model.Name;
             await _context.SaveChangesAsync();
         }
     }
