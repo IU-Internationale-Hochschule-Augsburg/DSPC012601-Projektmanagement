@@ -16,6 +16,8 @@ public class ProjectsViewModel : ViewModelBase
     private ProjectModel? _selectedProject;
     private string _newProjectName = string.Empty;
     private string _newProjectDescription = string.Empty;
+    private ObservableCollection<TaskModel> _selectedProjectTasks;
+    private ObservableCollection<ResourceModel> _selectedProjectResources;
     public RelayCommand EditProjectCommand { get; }
     public RelayCommand CancelAddEditProjectCommand { get; }
 
@@ -81,17 +83,46 @@ public class ProjectsViewModel : ViewModelBase
             SetProperty(ref _selectedProject, value);
             if (SelectedProject is not null)
             {
-                LoadTasksAsync(SelectedProject.Id);
+                LoadTasksAsync();
+                LoadResourcesAsync();
             }
-            
         }
     }
-
-    public IEnumerable<TaskModel> SelectedProjectTasks;
     
-    private async Task LoadTasksAsync(int projectId)
+    public ObservableCollection<TaskModel> SelectedProjectTasks
     {
-        //SelectedProjectTasks = await _taskRepository.GetAllForProjectAsync(projectId);
+        get => _selectedProjectTasks;
+        set
+        {
+            SetProperty(ref _selectedProjectTasks, value);
+            OnPropertyChanged(nameof(SelectedProject));
+        }
+    }
+    
+    public ObservableCollection<ResourceModel> SelectedProjectResources
+    {
+        get => _selectedProjectResources;
+        set
+        {
+            SetProperty(ref _selectedProjectResources, value);
+            OnPropertyChanged(nameof(SelectedProject));
+        }
+    }
+    
+    private async Task LoadTasksAsync()
+    {
+        if (SelectedProject is not null)
+        {
+            SelectedProjectTasks = new ObservableCollection<TaskModel>(await _taskRepository.GetAllForProjectAsync(await _projectRepository.GetByIdAsync(SelectedProject.Id)));
+        }
+    }
+    
+    private async Task LoadResourcesAsync()
+    {
+        if (SelectedProject is not null)
+        {
+            SelectedProjectResources = new ObservableCollection<ResourceModel>(await _resourceRepository.GetAllForProjectAsync(await _projectRepository.GetByIdAsync(SelectedProject.Id)));
+        }
     }
 
     public string NewProjectName

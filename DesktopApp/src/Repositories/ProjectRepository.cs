@@ -60,6 +60,16 @@ public class ProjectRepository : IProjectRepository
         }
     }
 
+    public async Task<Project> GetByIdAsync(int id)
+    {
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.id == id);
+        if (project == null)
+        {
+            throw new KeyNotFoundException($"Project with id {id} not found.");
+        }
+        return project;
+    }
+
     private static ProjectModel MapToModel(Project entity)
     {
         return new ProjectModel

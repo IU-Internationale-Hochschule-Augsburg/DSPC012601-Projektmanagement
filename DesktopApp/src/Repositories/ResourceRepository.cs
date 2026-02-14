@@ -62,6 +62,14 @@ public class ResourceRepository : IResourceRepository
         }
     }
 
+    public async Task<IEnumerable<ResourceModel>> GetAllForProjectAsync(Project project)
+    {
+        var tasks = await _context.Ressources
+            .Where(t => t.project == project)
+            .ToListAsync();
+        return tasks.Select(MapToModel);
+    }
+
     private static ResourceModel MapToModel(Ressource entity)
     {
         return new ResourceModel

@@ -315,36 +315,63 @@
                         </Grid>
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ScrollViewer>
+                            <TextBlock Grid.Row="0" FontSize="16" FontWeight="Medium" Margin="0 20 0 5">
+                                Aufgaben
+                            </TextBlock>
+                            <ScrollViewer Grid.Row="1">
                                 <ItemsControl ItemsSource="{Binding SelectedProjectTasks}">
                                     <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="#E0E0E0"
-                                            BorderThickness="0,0,0,1"
-                                            Padding="10,12"
-                                            Background="Transparent">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}"
-                                                       FontSize="16"
-                                                       FontWeight="Medium"
-                                                       Foreground="#212121" />
-                                            <TextBlock Text="{Binding Duration}"
-                                                       FontSize="12"
-                                                       Foreground="#757575"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Margin="0,4,0,0"
-                                                       Visibility="{Binding Duration, Converter={StaticResource BoolToVisibility}}" />
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="#E0E0E0"
+                                                    BorderThickness="0,0,0,1"
+                                                    Padding="10,12"
+                                                    Background="Transparent">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding DisplayName}" FontSize="16"
+                                                               FontWeight="Medium" />
+                                                    <TextBlock
+                                                        Text="{Binding StartDate, StringFormat='Start: {0:dd.MM.yyyy}'}"
+                                                        FontSize="12" Foreground="#757575" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <TextBlock Grid.Row="2" FontSize="16" FontWeight="Medium" Margin="0 20 0 5">
+                                Ressourcen
+                            </TextBlock>
+                            <ScrollViewer Grid.Row="3">
+                                <ItemsControl ItemsSource="{Binding SelectedProjectResources}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="#E0E0E0"
+                                                    BorderThickness="0,0,0,1"
+                                                    Padding="10,12"
+                                                    Background="Transparent">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}"
+                                                               FontSize="16"
+                                                               FontWeight="Medium"
+                                                               Foreground="#212121" />
+                                                    <TextBlock Text="{Binding Count}"
+                                                               FontSize="12"
+                                                               Foreground="#757575"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               Margin="0,4,0,0"
+                                                               Visibility="{Binding Count, Converter={StaticResource BoolToVisibility}}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </ScrollViewer>
                         </Grid>

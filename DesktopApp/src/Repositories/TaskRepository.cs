@@ -1,4 +1,6 @@
+using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
+using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.DataSource;
 using Projektmanagement_DesktopApp.Models;
 using TaskEntity = Projektmanagement_DesktopApp.DataClass.Task;
@@ -37,6 +39,14 @@ public class TaskRepository : ITaskRepository
         model.Id = entity.id;
         model.CreatedAt = entity.createDate;
         return model;
+    }
+
+    public async Task<IEnumerable<TaskModel>> GetAllForProjectAsync(Project project)
+    {
+        var tasks = await _context.Task
+            .Where(t => t.project == project)
+            .ToListAsync();
+        return tasks.Select(MapToModel);
     }
 
     private static TaskModel MapToModel(TaskEntity entity)
