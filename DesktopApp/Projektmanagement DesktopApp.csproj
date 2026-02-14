@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net10.0-windows</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <RootNamespace>Projektmanagement_DesktopApp</RootNamespace>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -12,11 +12,11 @@
     <ItemGroup>
       <PackageReference Include="MaterialDesignColors" Version="5.3.1-ci1236" />
       <PackageReference Include="MaterialDesignThemes" Version="5.3.1-ci1236" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.20">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.20" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,7 +24,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Content Include="obj\Debug\net10.0-windows\Projektmanagement DesktopApp_MarkupCompile.lref" />
+      <Content Include="obj\Debug\net8.0-windows\Projektmanagement DesktopApp_MarkupCompile.lref" />
     </ItemGroup>
 
     <ItemGroup>
