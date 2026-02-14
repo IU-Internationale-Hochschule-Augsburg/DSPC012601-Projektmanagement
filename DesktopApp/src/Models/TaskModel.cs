@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Projektmanagement_DesktopApp.DataClass;
 
 namespace Projektmanagement_DesktopApp.Models;
 
@@ -14,6 +15,8 @@ public class TaskModel
     
     public DateTime EndDate { get; set; } = DateTime.Now.AddDays(1);
     
+    public Worker? Worker { get; set; }
+    public Project? Project { get; set; }
     public int WorkerId { get; set; }
     public int ProjectId { get; set; }
 

@@ -10,10 +10,9 @@ public class Task : DataClass
 
     public DateTime endDate { get; set; }
 
-    public int workerUid { get; set; }
-    public int projectUid { get; set; }
+    public Worker? worker { get; set; }
+    public Project? project { get; set; }
     
-    // Allow null to indicate no predecessor/successor
     public int? previousTaskUid { get; set; }
     public int? nextTaskUid { get; set; }
 }

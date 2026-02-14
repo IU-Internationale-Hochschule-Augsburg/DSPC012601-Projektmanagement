@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.ViewModels;
 
 namespace Projektmanagement_DesktopApp.Models;
@@ -26,6 +27,6 @@ public class ResourceModel : ViewModelBase
         set => SetProperty(ref _count, value); 
     }
     
-    public int ProjectId { get; set; }
+    public Project? Project { get; set; }
     public DateTime CreatedAt { get; set; }
 }

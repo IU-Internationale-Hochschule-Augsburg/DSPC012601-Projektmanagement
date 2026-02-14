@@ -1,4 +1,6 @@
+using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
+using Projektmanagement_DesktopApp.DataClass;
 using Projektmanagement_DesktopApp.DataSource;
 using Projektmanagement_DesktopApp.Models;
 using TaskEntity = Projektmanagement_DesktopApp.DataClass.Task;
@@ -28,10 +30,10 @@ public class TaskRepository : ITaskRepository
             duration = model.Duration,
             startDate = model.StartDate,
             endDate = model.EndDate,
-            workerUid = model.WorkerId,
-            projectUid = model.ProjectId,
             previousTaskUid = model.PreviousTaskId,
-            nextTaskUid = model.NextTaskId
+            nextTaskUid = model.NextTaskId,
+            worker = model.Worker,
+            project = model.Project
         };
 
         _context.Task.Add(entity);
@@ -42,10 +44,18 @@ public class TaskRepository : ITaskRepository
         return model;
     }
 
+    public async Task<IEnumerable<TaskModel>> GetAllForProjectAsync(Project project)
+    {
+        var tasks = await _context.Task
+            .Where(t => t.project == project)
+            .ToListAsync();
+        return tasks.Select(MapToModel);
+    }
+
     public async Task<IEnumerable<TaskModel>> getTasksByProjectId(int projectId)
     {
         var tasks = await _context.Task
-            .Where(t => t.projectUid == projectId)
+            .Where(t => t.project.id == projectId)
             .ToListAsync();
         return tasks.Select(MapToModel);
     }
@@ -72,8 +82,8 @@ public class TaskRepository : ITaskRepository
         entity.duration = task.Duration;
         entity.startDate = task.StartDate;
         entity.endDate = task.EndDate;
-        entity.workerUid = task.WorkerId;
-        entity.projectUid = task.ProjectId;
+        entity.worker = task.Worker;
+        entity.project = task.Project;
 
         // update predecessor/successor
         entity.previousTaskUid = task.PreviousTaskId;
@@ -94,8 +104,8 @@ public class TaskRepository : ITaskRepository
             Duration = entity.duration,
             StartDate = entity.startDate,
             EndDate = entity.endDate,
-            WorkerId = entity.workerUid,
-            ProjectId = entity.projectUid,
+            Worker = entity.worker,
+            Project = entity.project,
             PreviousTaskId = entity.previousTaskUid,
             NextTaskId = entity.nextTaskUid,
             CreatedAt = entity.createDate
@@ -109,8 +119,8 @@ public class TaskRepository : ITaskRepository
         entity.duration = model.Duration;
         entity.startDate = model.StartDate;
         entity.endDate = model.EndDate;
-        entity.workerUid = model.WorkerId;
-        entity.projectUid = model.ProjectId;
+        entity.worker = model.Worker;
+        entity.project = model.Project;
         entity.previousTaskUid = model.PreviousTaskId;
         entity.nextTaskUid = model.NextTaskId;
     }

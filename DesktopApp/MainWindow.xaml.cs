@@ -22,7 +22,7 @@ public partial class MainWindow : Window
         var workerRepo = new WorkerRepository(dbContext);
 
         // Initialize ViewModels
-        var projectsVm = new ProjectsViewModel(projectRepo);
+        var projectsVm = new ProjectsViewModel(projectRepo, resourceRepo, taskRepo, workerRepo);
         var resourcesVm = new ResourcesViewModel(resourceRepo);
         var tasksVm = new TasksViewModel(taskRepo);
         var workersVm = new WorkersViewModel(workerRepo);

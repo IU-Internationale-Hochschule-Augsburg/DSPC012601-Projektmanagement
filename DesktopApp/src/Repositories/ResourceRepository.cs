@@ -27,7 +27,7 @@ public class ResourceRepository : IResourceRepository
         {
             name = model.Name,
             count = model.Count,
-            projectUid = model.ProjectId
+            project = model.Project
         };
 
         _context.Ressources.Add(entity);
@@ -62,6 +62,14 @@ public class ResourceRepository : IResourceRepository
         }
     }
 
+    public async Task<IEnumerable<ResourceModel>> GetAllForProjectAsync(Project project)
+    {
+        var tasks = await _context.Ressources
+            .Where(t => t.project == project)
+            .ToListAsync();
+        return tasks.Select(MapToModel);
+    }
+
     private static ResourceModel MapToModel(Ressource entity)
     {
         return new ResourceModel
@@ -69,7 +77,7 @@ public class ResourceRepository : IResourceRepository
             Id = entity.id,
             Name = entity.name,
             Count = entity.count,
-            ProjectId = entity.projectUid,
+            Project = entity.project,
             CreatedAt = entity.createDate
         };
     }

@@ -6,5 +6,5 @@ public class Ressource : DataClass
 
     public int count { get; set; }
     
-    public int projectUid { get; set; }
+    public Project? project { get; set; }
 }
