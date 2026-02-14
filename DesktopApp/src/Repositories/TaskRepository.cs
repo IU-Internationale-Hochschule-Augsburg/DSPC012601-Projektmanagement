@@ -24,6 +24,7 @@ public class TaskRepository : ITaskRepository
     {
         var entity = new TaskEntity
         {
+            description = model.Description,
             duration = model.Duration,
             startDate = model.StartDate,
             endDate = model.EndDate,
@@ -67,6 +68,7 @@ public class TaskRepository : ITaskRepository
         if (entity == null) throw new InvalidOperationException($"Task with id {task.Id} not found");
 
         // Update fields
+        entity.description = task.Description;
         entity.duration = task.Duration;
         entity.startDate = task.StartDate;
         entity.endDate = task.EndDate;
@@ -88,6 +90,7 @@ public class TaskRepository : ITaskRepository
         return new TaskModel
         {
             Id = entity.id,
+            Description = entity.description,
             Duration = entity.duration,
             StartDate = entity.startDate,
             EndDate = entity.endDate,
@@ -102,6 +105,7 @@ public class TaskRepository : ITaskRepository
     // Helper to map model back to entity when needed (not used currently)
     private static void MapToEntity(TaskModel model, TaskEntity entity)
     {
+        entity.description = model.Description;
         entity.duration = model.Duration;
         entity.startDate = model.StartDate;
         entity.endDate = model.EndDate;

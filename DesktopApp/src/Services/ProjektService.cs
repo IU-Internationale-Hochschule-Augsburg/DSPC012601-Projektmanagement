@@ -41,23 +41,22 @@ public class ProjektService
             if (visiting.Contains(id))
                 throw new InvalidOperationException("Zyklische Abhängigkeit zwischen Aufgaben erkannt. Timeline kann nicht berechnet werden.");
 
-            if (!taskById.ContainsKey(id))
+            if (!taskById.TryGetValue(id, out var task))
                 throw new InvalidOperationException($"Task mit Id {id} nicht gefunden.");
 
             visiting.Add(id);
-            var task = taskById[id];
 
             DateTime newStart;
 
             if (task.PreviousTaskId.HasValue)
             {
                 var predId = task.PreviousTaskId.Value;
-                if (!taskById.ContainsKey(predId))
+                if (!taskById.TryGetValue(predId, out var predecessorTask))
                     throw new InvalidOperationException($"Vorgänger-Task mit Id {predId} für Task {task.Id} nicht gefunden.");
 
                 // ensure predecessor is calculated first
                 await RecalculateChainAsync(predId);
-                newStart = taskById[predId].EndDate;
+                newStart = predecessorTask.EndDate;
             }
             else
             {
@@ -104,14 +103,10 @@ public class ProjektService
             if (task.NextTaskId.HasValue)
             {
                 var nextId = task.NextTaskId.Value;
-                if (taskById.ContainsKey(nextId))
-                {
-                    await RecalculateChainAsync(nextId);
-                }
-                else
-                {
+                if (!taskById.ContainsKey(nextId))
                     throw new InvalidOperationException($"Nachfolger-Task mit Id {nextId} für Task {task.Id} nicht gefunden.");
-                }
+
+                await RecalculateChainAsync(nextId);
             }
         }
 

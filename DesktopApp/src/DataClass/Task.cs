@@ -1,7 +1,9 @@
-﻿﻿namespace Projektmanagement_DesktopApp.DataClass;
+﻿namespace Projektmanagement_DesktopApp.DataClass;
 
 public class Task : DataClass
 {
+    public string description { get; set; } = string.Empty;
+    
     public int duration { get; set; }
 
     public DateTime startDate { get; set; }

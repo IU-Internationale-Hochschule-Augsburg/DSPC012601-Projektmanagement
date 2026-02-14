@@ -6,6 +6,8 @@ public class TaskModel
 {
     public int Id { get; set; }
     
+    public string Description { get; set; } = string.Empty;
+    
     public int Duration { get; set; }
     
     public DateTime StartDate { get; set; } = DateTime.Now;
@@ -22,5 +24,7 @@ public class TaskModel
     public DateTime CreatedAt { get; set; }
 
     // Hilfseigenschaft für die Anzeige
-    public string DisplayName => $"Aufgabe #{Id} ({Duration}h)";
+    public string DisplayName => string.IsNullOrWhiteSpace(Description)
+        ? $"Aufgabe #{Id} ({Duration}h)"
+        : $"{Description} ({Duration}h)";
 }
