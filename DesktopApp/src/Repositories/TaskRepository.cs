@@ -50,6 +50,8 @@ public class TaskRepository : ITaskRepository
     public async Task<IEnumerable<TaskModel>> GetAllForProjectAsync(Project project)
     {
         var tasks = await _context.Task
+            .Include(t => t.Project)
+            .Include(t => t.Worker)
             .Where(t => t.Project == project)
             .ToListAsync();
         return tasks.Select(MapToModel);
@@ -73,7 +75,10 @@ public class TaskRepository : ITaskRepository
 
     public async Task<TaskModel?> GetByIdAsync(int id)
     {
-        var entity = await _context.Task.FirstOrDefaultAsync(t => t.Id == id);
+        var entity = await _context.Task
+            .Include(t => t.Project)
+            .Include(t => t.Worker)
+            .FirstOrDefaultAsync(t => t.Id == id);
         return entity == null ? null : MapToModel(entity);
     }
 

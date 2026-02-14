@@ -198,6 +198,10 @@ public class TasksViewModel : ViewModelBase
         // Find matching objects in lists
         NewProject = Projects.FirstOrDefault(p => p.Id == SelectedTask.ProjectId);
         NewWorker = Workers.FirstOrDefault(w => w.Id == SelectedTask.WorkerId);
+
+        // Ensure IDs are synced if they were 0 but objects existed
+        if (NewProject != null) SelectedTask.ProjectId = NewProject.Id;
+        if (NewWorker != null) SelectedTask.WorkerId = NewWorker.Id;
         
         // Update predecessors based on project
         UpdatePredecessorsList();
@@ -218,9 +222,12 @@ public class TasksViewModel : ViewModelBase
 
         // Add all tasks that belong to the selected project
         // Exclude the task currently being edited (if any) to avoid self-reference cycles (basic check)
-        foreach (var task in Tasks.Where(t => t.ProjectId == NewProject.Id))
+        var filteredTasks = Tasks.Where(t => 
+            (t.ProjectId == NewProject.Id || (t.Project != null && t.Project.Id == NewProject.Id)) && 
+            (SelectedTask == null || t.Id != SelectedTask.Id));
+            
+        foreach (var task in filteredTasks)
         {
-            if (SelectedTask != null && task.Id == SelectedTask.Id) continue;
             PotentialPredecessors.Add(task);
         }
     }
@@ -237,7 +244,9 @@ public class TasksViewModel : ViewModelBase
                 SelectedTask.Duration = NewDuration;
                 SelectedTask.Description = NewDescription.Trim();
                 SelectedTask.Project = NewProject;
+                SelectedTask.ProjectId = NewProject?.Id ?? 0;
                 SelectedTask.Worker = NewWorker;
+                SelectedTask.WorkerId = NewWorker?.Id ?? 0;
                 SelectedTask.PreviousTaskId = NewPredecessor?.Id;
                 
                 // If the predecessor changed, we might want to clear NextTaskId on the *old* predecessor 
@@ -249,8 +258,8 @@ public class TasksViewModel : ViewModelBase
                 
                 await _taskRepository.UpdateAsync(SelectedTask);
                 
-                // Refresh list or at least re-bind
-                var updated = await _taskRepository.GetByIdAsync(SelectedTask.Id);
+                // Refresh list or at least re-bind (perform call for side effects if any)
+                await _taskRepository.GetByIdAsync(SelectedTask.Id);
                 // (Optional: update the object in ObservableCollection if needed)
             }
             else
@@ -261,7 +270,9 @@ public class TasksViewModel : ViewModelBase
                     Duration = NewDuration,
                     Description = NewDescription.Trim(),
                     Project = NewProject,
+                    ProjectId = NewProject?.Id ?? 0,
                     Worker = NewWorker,
+                    WorkerId = NewWorker?.Id ?? 0,
                     PreviousTaskId = NewPredecessor?.Id
                 };
                 var saved = await _taskRepository.AddAsync(model);

@@ -17,7 +17,9 @@ public class ResourceRepository : IResourceRepository
 
     public async Task<IEnumerable<ResourceModel>> GetAllAsync()
     {
-        var resources = await _context.Ressources.ToListAsync();
+        var resources = await _context.Ressources
+            .Include(r => r.Project)
+            .ToListAsync();
         return resources.Select(MapToModel);
     }
 
@@ -45,7 +47,7 @@ public class ResourceRepository : IResourceRepository
         {
             entity.Name = model.Name;
             entity.Count = model.Count;
-            // vllt. noch was für die Projekt zuordnung hinzufügen?
+            entity.Project = model.Project != null ? await _context.Projects.FindAsync(model.Project.Id) : null;
             await _context.SaveChangesAsync();
         }
     }
@@ -64,10 +66,10 @@ public class ResourceRepository : IResourceRepository
 
     public async Task<IEnumerable<ResourceModel>> GetAllForProjectAsync(Project project)
     {
-        var tasks = await _context.Ressources
+        var resources = await _context.Ressources
             .Where(t => t.Project == project)
             .ToListAsync();
-        return tasks.Select(MapToModel);
+        return resources.Select(MapToModel);
     }
 
     private static ResourceModel MapToModel(Ressource entity)
